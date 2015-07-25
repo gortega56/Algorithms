@@ -99,6 +99,7 @@ namespace cliqCity
 		}
 
 		// Partition: A subroutine used by Quick Sort. Partitions array t into subarrays of values less than and greater than the partition element. Always uses last element as partition.
+		// TO DO: Optimize for non distinct elements by returning a partition range. Median of 3 partition.
 		template<class T>
 		int partition(T* t, int p, int r, int(*compare)(const void*, const void*))
 		{
@@ -114,6 +115,7 @@ namespace cliqCity
 		}
 
 		// Quick Sort: Recursively sorts using Partition subroutine. Runs in worst case quadratic time, and nlgn expected time. Asymptotic performance can be improved via randomization
+		// TO DO: Optimize using tail recursive sort.
 		template<class T>
 		void quickSort(T* t, int p, int r, int(*compare)(const void*, const void*))
 		{
