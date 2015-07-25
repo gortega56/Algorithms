@@ -80,8 +80,10 @@ int main(int argc, int* argv[])
 			break;
 		case 3:
 			quickSort(t, 0, arrayLength, compareInt);
+			break;
 		case 4:
 			randomizedQuickSort(t, 0, arrayLength, compareInt);
+			break;
 		default:
 			break;
 		}
