@@ -27,7 +27,7 @@ namespace cliqCity
 		}
 
 		template<class T>
-		void exchange(T& a, T& b)
+		inline void exchange(T& a, T& b)
 		{
 			T t = a;
 			a = b;
@@ -124,6 +124,7 @@ namespace cliqCity
 			}
 		}
 
+		// Randomized Quick Sort: Quick Sort with a randomly selected partition element.
 		template<class T>
 		void randomizedQuickSort(T *t, int p, int r, int(*compare)(const void*, const void*))
 		{
