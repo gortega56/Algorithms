@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Algorithms", "Algorithms\Al
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ComparisonSortTest", "ComparisonSortTest\ComparisonSortTest\ComparisonSortTest.vcxproj", "{EEB6A847-827C-42CC-9B9D-A26F8A96FAF1}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DataStructures", "DataStructures\DataStructures.vcxproj", "{3662ABFE-F911-46A6-B61C-8A82B75D9513}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -22,6 +24,10 @@ Global
 		{EEB6A847-827C-42CC-9B9D-A26F8A96FAF1}.Debug|Win32.Build.0 = Debug|Win32
 		{EEB6A847-827C-42CC-9B9D-A26F8A96FAF1}.Release|Win32.ActiveCfg = Release|Win32
 		{EEB6A847-827C-42CC-9B9D-A26F8A96FAF1}.Release|Win32.Build.0 = Release|Win32
+		{3662ABFE-F911-46A6-B61C-8A82B75D9513}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3662ABFE-F911-46A6-B61C-8A82B75D9513}.Debug|Win32.Build.0 = Debug|Win32
+		{3662ABFE-F911-46A6-B61C-8A82B75D9513}.Release|Win32.ActiveCfg = Release|Win32
+		{3662ABFE-F911-46A6-B61C-8A82B75D9513}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

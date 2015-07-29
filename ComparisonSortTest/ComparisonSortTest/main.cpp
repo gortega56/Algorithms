@@ -1,10 +1,26 @@
-#include "ComparisonSort.hpp"
+#include "comparison_sorts.hpp"
 #include <cstdlib>
 #include <stdio.h>
 #include <ctime>
 #include <iostream>
 
 using namespace cliqCity::algorithm;
+
+struct Comparator
+{
+	int operator()(const int& first, const int& second) const
+	{
+		if (first < second) {
+			return -1;
+		}
+		else if (first == second) {
+			return 0;
+		}
+		else {
+			return 1;
+		}
+	}
+} comparator;
 
 int compareInt(const void* a, const void* b)
 {
@@ -53,7 +69,7 @@ int main(int argc, int* argv[])
 		printf("Enter number of elements: ");
 		std::cin >> arrayLength;
 
-		srand(time(NULL));
+		srand((unsigned int)time(NULL));
 		printf("Array Length: %i \n", arrayLength);
 		printf("Unsorted Int: ");
 		int* t = new int[arrayLength];
@@ -63,34 +79,59 @@ int main(int argc, int* argv[])
 		}
 		printf("\n");
 
-		int sortType;
-		printf("Choose Sort: \n 0: Insertion Sort\n 1: Bubble Sort\n 2: Merge Sort\n 3: Quick Sort\n 4: Randomized Quick Sort\n");
-		std::cin >> sortType;
+		int sortAlgorithm;
+		printf("Choose Sort: \n 0: Insertion Sort\n 1: Bubble Sort\n 2: Merge Sort\n 3: Quick Sort\n 4: Randomized Quick Sort\n 5: Heap Sort\n");
+		std::cin >> sortAlgorithm;
 
-		switch (sortType)
+		int sortOrder;
+		printf("Choose Sort Order: \n 0: Descending\n 1: Ascending\n");
+		std::cin >> sortOrder;
+
+		SortOrder order;
+		switch (sortOrder)
 		{
 		case 0:
-			insertionSort(t, arrayLength, compareInt);
+			order = SortOrderDescending;
 			break;
 		case 1:
-			bubbleSort(t, arrayLength, compareInt);
+			order = SortOrderAscending;
+			break;
+		default:
+			order = SortOrderDescending;
+			break;
+		}
+
+		switch (sortAlgorithm)
+		{
+		case 0:
+			insertionSort(t, comparator, arrayLength, order);
+			break;
+		case 1:
+			bubbleSort(t, comparator, arrayLength, order);
 			break;
 		case 2:
-			mergeSort(t, 0, arrayLength, compareInt);
+			mergeSort(t, comparator, 0, arrayLength, order);
 			break;
 		case 3:
-			quickSort(t, 0, arrayLength, compareInt);
+			quickSort(t, comparator, 0, arrayLength, order);
 			break;
 		case 4:
-			randomizedQuickSort(t, 0, arrayLength, compareInt);
+			randomizedQuickSort(t, comparator, 0, arrayLength, order);
 			break;
+		case 5:
+			heapSort(t, comparator, arrayLength);
 		default:
 			break;
 		}
 
 		bool correct = true;
 		for (int i = 1; i < arrayLength; i++) {
-			correct = (compareInt(&t[i - 1], &t[i]) <= 0);
+			if (order == SortOrderAscending) {
+				correct = (compareInt(&t[i - 1], &t[i]) <= 0);
+			}
+			else {
+				correct = (compareInt(&t[i - 1], &t[i]) >= 0);
+			}
 			if (!correct) {
 				printf("ERROR: Sort output is incorrect \n");
 				break;
