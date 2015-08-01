@@ -143,46 +143,51 @@ namespace cliqCity
 			}
 		}
 
+		// Build Heap: Uses subroutine to construct a heap given array t, and has linear Complexity
 		template<class T, class C>
-		void buildHeap(T* const t, const C& comparator, const int& heapSize, const int& length)
+		void buildHeap(T* const t, const C& comparator, const int& length, SortOrder order)
 		{
-			for (int i = length / 2; i > 0; i--) {
-				heapify(t, comparator, i, heapSize);
+			int heapSize = length;
+			for (int i = (length / 2); i >= 0; i--) {
+				heapify(t, comparator, i, heapSize, order);
 			}
 		}
 
+		// Heapify: Sorts an array in place to statisfy a heap property defined by comparator and sort order. Runs in logarithmic complexity
 		template<class T, class C>
-		void heapify(T* const t, const C& comparator, const int& index, const int& heapSize)
+		void heapify(T* const t, const C& comparator, const int& index, const int& heapSize, SortOrder order)
 		{
-			int left = index << 1;
-			int right = (index << 1) + 1;
+			int left	= (index << 1) + 1;
+			int right	= (index << 1) + 2;
+
 			int largest;
-			if (left <= heapSize && comparator(t[left], t[index]) == -1) {
+			if (left < heapSize && comparator(t[left], t[index]) == order) {
 				largest = left;
 			}
 			else {
 				largest = index;
 			}
 
-			if (right <= heapSize && comparator(t[right], t[largest]) == -1) {
+			if (right < heapSize && comparator(t[right], t[largest]) == order) {
 				largest = right;
 			}
 
 			if (largest != index) {
 				exchange(t[index], t[largest]);
-				heapify(t, comparator, largest, heapSize);
+				heapify(t, comparator, largest, heapSize, order);
 			}
 		}
 
+		// Heap Sort: Sorts array in place by constructing a heap. This sort is stable and runs in O(nlgn) complexity.
 		template<class T, class C>
-		void heapSort(T* const t, const C& comparator, const int& length)
+		void heapSort(T* const t, const C& comparator, const int& length, SortOrder order)
 		{
 			int heapSize = length;
-			buildHeap(t, comparator, heapSize, length);
-			for (int i = length - 1; i > 1; i--) {
+			buildHeap(t, comparator, length, order);
+			for (int i = length - 1; i > 0; i--) {
 				exchange(t[0], t[i]);
 				heapSize--;
-				heapify(t, comparator, 0, heapSize);
+				heapify(t, comparator, 0, heapSize, order);
 			}
 		}
 	}

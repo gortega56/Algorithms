@@ -119,7 +119,7 @@ int main(int argc, int* argv[])
 			randomizedQuickSort(t, comparator, 0, arrayLength, order);
 			break;
 		case 5:
-			heapSort(t, comparator, arrayLength);
+			heapSort(t, comparator, arrayLength, order);
 		default:
 			break;
 		}

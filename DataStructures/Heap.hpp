@@ -12,24 +12,24 @@ namespace cliqCity
 	class Heap
 	{
 	public:
-		Heap(T* t, const C& comparator, int heapSize, int length) : t(t), comparator(comparator), heapSize(heapSize), length(length)
+		Heap(T* t, const C& comparator, int heapSize, int length, algorithm::SortOrder order) : t(t), comparator(comparator), heapSize(heapSize), length(length), order(order)
 		{
-			algorithm::buildHeap(t, comparator, heapSize, length);
+			algorithm::buildHeap(t, comparator, heapSize, length, order);
 		}
 
 		inline T& getParent(int index) const
 		{
-			return t[index >> 1];
+			return t[(index - 1) >> 1];
 		}
 
-		inline T& getLeftIndex(int index) const
-		{
-			return t[index << 1];
-		}
-
-		inline T& getRightIndex(int index) const
+		inline T& getLeft(int index) const
 		{
 			return t[(index << 1) + 1];
+		}
+
+		inline T& getRight(int index) const
+		{
+			return t[(index << 1) + 2];
 		}
 
 		inline int getHeapSize() const
@@ -47,5 +47,6 @@ namespace cliqCity
 		C comparator;
 		int heapSize;
 		int length;
+		algorithm::SortOrder order;
 	};
 }
