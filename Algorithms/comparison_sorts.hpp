@@ -14,13 +14,6 @@ namespace cliqCity
 {
 	namespace algorithm
 	{	
-		enum SortOrder
-		{
-			SortOrderDescending =	-1,
-			SortOrderEqual		=	0,
-			SortOrderAscending	=	1
-		};
-
 		// Insertion Sort: Sort array of type T in place. Insertion sort is stable and has quadratic complexity.
 		template<class T, class C> 
 		void insertionSort(T* const t, const C& comparator, const int& length, const SortOrder order)
@@ -87,6 +80,9 @@ namespace cliqCity
 					j++;
 				}
 			}
+
+			delete[] left;
+			delete[] right;
 		}
 
 		// Merge Sort: Recursively splits array into tow subarrays of n/2 length. Uses Merge subroutine. Has complexity O(nlgn)

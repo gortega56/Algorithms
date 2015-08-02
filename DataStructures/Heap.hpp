@@ -12,7 +12,7 @@ namespace cliqCity
 	class Heap
 	{
 	public:
-		Heap(T* t, const C& comparator, int heapSize, int length, algorithm::SortOrder order) : t(t), comparator(comparator), heapSize(heapSize), length(length), order(order)
+		Heap(T* t, int heapSize, int length, SortOrder order) : t(t), comparator(C()), heapSize(heapSize), length(length), order(order)
 		{
 			algorithm::buildHeap(t, comparator, heapSize, length, order);
 		}
@@ -47,6 +47,6 @@ namespace cliqCity
 		C comparator;
 		int heapSize;
 		int length;
-		algorithm::SortOrder order;
+		SortOrder order;
 	};
 }

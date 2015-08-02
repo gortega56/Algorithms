@@ -1,4 +1,5 @@
 #include "comparison_sorts.hpp"
+#include "linear_sorts.hpp"
 #include <cstdlib>
 #include <stdio.h>
 #include <ctime>
@@ -21,6 +22,14 @@ struct Comparator
 		}
 	}
 } comparator;
+
+struct Rank
+{
+	int operator()(const int& value) const
+	{
+		return value;
+	}
+} rank;
 
 int compareInt(const void* a, const void* b)
 {
@@ -80,24 +89,24 @@ int main(int argc, int* argv[])
 		printf("\n");
 
 		int sortAlgorithm;
-		printf("Choose Sort: \n 0: Insertion Sort\n 1: Bubble Sort\n 2: Merge Sort\n 3: Quick Sort\n 4: Randomized Quick Sort\n 5: Heap Sort\n");
+		printf("Choose Sort: \n 0: Insertion Sort\n 1: Bubble Sort\n 2: Merge Sort\n 3: Quick Sort\n 4: Randomized Quick Sort\n 5: Heap Sort\n 6: Counting Sort\n");
 		std::cin >> sortAlgorithm;
 
 		int sortOrder;
 		printf("Choose Sort Order: \n 0: Descending\n 1: Ascending\n");
 		std::cin >> sortOrder;
 
-		SortOrder order;
+		cliqCity::SortOrder order;
 		switch (sortOrder)
 		{
 		case 0:
-			order = SortOrderDescending;
+			order = cliqCity::SortOrderDescending;
 			break;
 		case 1:
-			order = SortOrderAscending;
+			order = cliqCity::SortOrderAscending;
 			break;
 		default:
-			order = SortOrderDescending;
+			order = cliqCity::SortOrderDescending;
 			break;
 		}
 
@@ -120,13 +129,22 @@ int main(int argc, int* argv[])
 			break;
 		case 5:
 			heapSort(t, comparator, arrayLength, order);
+		case 6:
+		{
+			int* s = new int[arrayLength];
+			int k = cliqCity::maxIndex(t, comparator, arrayLength);
+			countingSort(t, s, rank, t[k], arrayLength, order);
+			delete[] t;
+			t = s;
+		}
+
 		default:
 			break;
 		}
 
 		bool correct = true;
 		for (int i = 1; i < arrayLength; i++) {
-			if (order == SortOrderAscending) {
+			if (order == cliqCity::SortOrderAscending) {
 				correct = (compareInt(&t[i - 1], &t[i]) <= 0);
 			}
 			else {
@@ -152,5 +170,7 @@ int main(int argc, int* argv[])
 			std::cin >> input;
 			exit = (input == 'n' || input == 'N');
 		} while (input != 'y' && input != 'Y' && input != 'N' && input != 'n');
+
+		delete[] t;
 	}
 }

@@ -21,5 +21,8 @@
     <ClInclude Include="comparison_sorts.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="linear_sorts.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
