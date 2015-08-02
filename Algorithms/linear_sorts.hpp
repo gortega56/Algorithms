@@ -12,7 +12,7 @@ namespace cliqCity
 {
 	namespace algorithm
 	{
-		// Counting Sort: Uses external storage to count elements in array t. The counter maintains the number of elements in rank with each index. 
+		// Counting Sort: Uses auxiliary storage to count elements in array t. The counter maintains the number of elements in rank with each index. 
 		// The counter is then used to index back into the output array. Runs in linear time.
 		template<class T, class R>
 		void countingSort(T* const t, T* const output, const R& rank, const int& max, const int& length, SortOrder order)
@@ -29,24 +29,16 @@ namespace cliqCity
 				counter[rank(t[j])]++;
 			}
 
-			switch (order) 
-			{
-				case SortOrderDescending:
-				{
-					// Set counter[i] to number of elements greater than or equal to j
-					for (int i = max - 1; i >= 0; i--) {
-						counter[i] += counter[i + 1];
-					}
-					break;
+			if (order == SortOrderDescending) {
+				// Set counter[i] to number of elements greater than or equal to j
+				for (int i = max - 1; i >= 0; i--) {
+					counter[i] += counter[i + 1];
 				}
-				case SortOrderAscending:
-				default:
-				{
-					// Set counter[i] to number of elements less than or equal to j
-					for (int i = 1; i <= max; i++) {
-						counter[i] += counter[i - 1];
-					}
-					break;
+			}
+			else {
+				// Set counter[i] to number of elements less than or equal to j
+				for (int i = 1; i <= max; i++) {
+					counter[i] += counter[i - 1];
 				}
 			}
 
@@ -61,4 +53,3 @@ namespace cliqCity
 		}
 	}
 }
-
