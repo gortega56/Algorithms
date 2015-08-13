@@ -9,7 +9,7 @@ using namespace cliqCity::algorithm;
 
 struct Comparator
 {
-	int operator()(const int& first, const int& second) const
+	inline int operator()(const int& first, const int& second) const
 	{
 		if (first < second) {
 			return -1;
@@ -25,11 +25,27 @@ struct Comparator
 
 struct Rank
 {
-	int operator()(const int& value) const
+	inline int operator()(const int& value) const
 	{
 		return value;
 	}
 } rank;
+
+struct Key
+{
+	inline int* operator()(int* const t, const int& index) const
+	{
+		return &t[index];
+	}
+} key;
+
+struct UnsignedKey
+{
+	inline unsigned int* operator()(unsigned int* t, const int& index) const
+	{
+		return &t[index];
+	}
+} unsignedKey;
 
 int compareInt(const void* a, const void* b)
 {
@@ -81,15 +97,15 @@ int main(int argc, int* argv[])
 		srand((unsigned int)time(NULL));
 		printf("Array Length: %i \n", arrayLength);
 		printf("Unsorted Int: ");
-		int* t = new int[arrayLength];
+		unsigned int* t = new unsigned int[arrayLength];
 		for (int i = 0; i < arrayLength; i++) {
-			t[i] = rand() % arrayLength;
-			printf("%i ", t[i]);
+			t[i] = ULONG_MAX - i;
+			printf("%u ", t[i]);
 		}
 		printf("\n");
 
 		int sortAlgorithm;
-		printf("Choose Sort: \n 0: Insertion Sort\n 1: Bubble Sort\n 2: Merge Sort\n 3: Quick Sort\n 4: Randomized Quick Sort\n 5: Heap Sort\n 6: Counting Sort\n");
+		printf("Choose Sort: \n 0: Insertion Sort\n 1: Bubble Sort\n 2: Merge Sort\n 3: Quick Sort\n 4: Randomized Quick Sort\n 5: Heap Sort\n 6: Counting Sort\n 7: Radix Sort\n");
 		std::cin >> sortAlgorithm;
 
 		int sortOrder;
@@ -129,15 +145,24 @@ int main(int argc, int* argv[])
 			break;
 		case 5:
 			heapSort(t, comparator, arrayLength, order);
+			break;
 		case 6:
 		{
-			int* s = new int[arrayLength];
+			unsigned int* s = new unsigned int[arrayLength];
 			int k = cliqCity::maxIndex(t, comparator, arrayLength);
 			countingSort(t, s, rank, t[k], arrayLength, order);
 			delete[] t;
 			t = s;
+			break;
 		}
-
+		case 7:
+		{
+			unsigned int* s = new unsigned int[arrayLength];
+			radixSort(t, s, unsignedKey, arrayLength, order);
+			delete[] t;
+			t = s;
+			break;
+		}
 		default:
 			break;
 		}
@@ -158,7 +183,7 @@ int main(int argc, int* argv[])
 
 		printf("Sorted Int: ");
 		for (int i = 0; i < arrayLength; i++) {
-			printf("%i ", t[i]);
+			printf("%u ", t[i]);
 		}
 
 		printf("\n");
