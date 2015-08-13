@@ -92,7 +92,8 @@ namespace cliqCity
 			// Radix Passes
 			// Figure out the swap!!! Almost there!
 			T* swap = new T[length];
-			memcpy_s(swap, sizeof(T) * length, t, sizeof(T) * length);
+			size_t size = sizeof(T) * length;
+			memcpy_s(swap, size, t, size);
 
 			UInt32* c = NULL;
 			for (int pass = 0; pass < 4; pass++) {
@@ -107,13 +108,12 @@ namespace cliqCity
 					c[*(radix)]--;
 				}
 
-				memcpy_s(swap, sizeof(T) * length, output, sizeof(T) * length);
+				memcpy_s(swap, size, output, size);
 
 				printf("\n");
-
-				delete[] swap;
 			}
 
+			delete[] swap;
 		}
 	}
 }
