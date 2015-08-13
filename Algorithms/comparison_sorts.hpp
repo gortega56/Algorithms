@@ -101,41 +101,46 @@ namespace cliqCity
 		// Partition: A subroutine used by Quick Sort. Partitions array t into subarrays of values less than and greater than the partition element. Always uses last element as partition.
 		// TO DO: Optimize for non distinct elements by returning a partition range. Median of 3 partition.
 		template<class T, class C>
-		int partition(T* const t, const C& comparator, const int& p, const int& r, SortOrder order)
+		int partition(T* const t, const C& comparator, const int& begin, const int& end, SortOrder order)
 		{
-			int last = r - 1;
-			int i = p - 1;
-			for (int j = p; j < last; j++) {
-				int result = comparator(t[j], t[last]);
-				if ((result <= 0 && order == SortOrderAscending) || (result >= 0 && order == SortOrderDescending)) {
-					exchange(t[++i], t[j]);
+			int partition = end - 1;
+			int right = begin - 1;
+
+			// Sort elements based on comparison with partition element
+			for (int left = begin; left < partition; left++) {
+				int comparison = comparator(t[left], t[partition]);
+				if ((comparison <= 0 && order == SortOrderAscending) || (comparison >= 0 && order == SortOrderDescending)) {
+					exchange(t[++right], t[left]);
 				}
 			}
-			exchange(t[++i], t[last]);
-			return i;
+
+			// Swap partition with first element of right sub array
+			exchange(t[++right], t[partition]);
+
+			return right;
 		}
 
 		// Quick Sort: Recursively sorts using Partition subroutine. Runs in worst case quadratic time, and nlgn expected time. Asymptotic performance can be improved via randomization
 		// TO DO: Optimize using tail recursive sort.
 		template<class T, class C>
-		void quickSort(T* const t, const C& comparator, const int& p, const int& r, SortOrder order)
+		void quickSort(T* const t, const C& comparator, const int& begin, const int& end, SortOrder order)
 		{
-			if (r - p > 1) {
-				int q = partition(t, comparator, p, r, order);
-				quickSort(t, comparator, p, q, order);
-				quickSort(t, comparator, q + 1, r, order);
+			if (end - begin > 1) {
+				int p = partition(t, comparator, begin, end, order);
+				quickSort(t, comparator, begin, p, order);
+				quickSort(t, comparator, p + 1, end, order);
 			}
 		}
 
 		// Randomized Quick Sort: Quick Sort with a randomly selected partition element.
 		template<class T, class C>
-		void randomizedQuickSort(T* const t, const C& comparator, const int& p, const int& r, SortOrder order)
+		void randomizedQuickSort(T* const t, const C& comparator, const int& begin, const int& end, SortOrder order)
 		{
-			if (r - p > 1) {
-				exchange(t[r - 1], t[rand() % (r - 1)]);
-				int q = partition(t, comparator, p, r, order);
-				quickSort(t, comparator, p, q, order);
-				quickSort(t, comparator, q + 1, r, order);
+			if (end - begin > 1) {
+				exchange(t[end - 1], t[rand() % (end - 1)]);
+				int p = partition(t, comparator, begin, end, order);
+				quickSort(t, comparator, begin, p, order);
+				quickSort(t, comparator, p + 1, end, order);
 			}
 		}
 
@@ -153,24 +158,27 @@ namespace cliqCity
 		template<class T, class C>
 		void heapify(T* const t, const C& comparator, const int& index, const int& heapSize, SortOrder order)
 		{
+			// Get left and right child.
 			int left	= (index << 1) + 1;
 			int right	= (index << 1) + 2;
 
-			int largest;
+			// Find target value (min or max).
+			int target;
 			if (left < heapSize && comparator(t[left], t[index]) == order) {
-				largest = left;
+				target = left;
 			}
 			else {
-				largest = index;
+				target = index;
 			}
 
-			if (right < heapSize && comparator(t[right], t[largest]) == order) {
-				largest = right;
+			if (right < heapSize && comparator(t[right], t[target]) == order) {
+				target = right;
 			}
 
-			if (largest != index) {
-				exchange(t[index], t[largest]);
-				heapify(t, comparator, largest, heapSize, order);
+			// Swap if either child is greater/smaller and heapify the target.
+			if (target != index) {
+				exchange(t[index], t[target]);
+				heapify(t, comparator, target, heapSize, order);
 			}
 		}
 
