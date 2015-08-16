@@ -4,63 +4,9 @@
 #include <stdio.h>
 #include <ctime>
 #include <iostream>
+#include "functors.h"
 
 using namespace cliqCity::algorithm;
-
-struct Comparator
-{
-	inline int operator()(const int& first, const int& second) const
-	{
-		if (first < second) {
-			return -1;
-		}
-		else if (first == second) {
-			return 0;
-		}
-		else {
-			return 1;
-		}
-	}
-} comparator;
-
-struct Rank
-{
-	inline int operator()(const int& value) const
-	{
-		return value;
-	}
-} rank;
-
-struct Key
-{
-	inline int* operator()(int* const t, const int& index) const
-	{
-		return &t[index];
-	}
-} key;
-
-struct UnsignedKey
-{
-	inline unsigned int* operator()(unsigned int* t, const int& index) const
-	{
-		return &t[index];
-	}
-} unsignedKey;
-
-int compareInt(const void* a, const void* b)
-{
-	int first = *(int*)a;
-	int second = *(int*)b;
-	if (first < second) {
-		return -1;
-	}
-	else if (first == second) {
-		return 0;
-	}
-	else {
-		return 1;
-	}
-}
 
 class SortableObject
 {
@@ -99,7 +45,7 @@ int main(int argc, int* argv[])
 		printf("Unsorted Int: ");
 		unsigned int* t = new unsigned int[arrayLength];
 		for (int i = 0; i < arrayLength; i++) {
-			t[i] = ULONG_MAX - i;
+			t[i] = rand() % 100;
 			printf("%u ", t[i]);
 		}
 		printf("\n");
@@ -150,7 +96,7 @@ int main(int argc, int* argv[])
 		{
 			unsigned int* s = new unsigned int[arrayLength];
 			int k = cliqCity::maxIndex(t, comparator, arrayLength);
-			countingSort(t, s, rank, t[k], arrayLength, order);
+			uint32_CountingSort(t, s, unsignedRank, t[k], arrayLength, order);
 			delete[] t;
 			t = s;
 			break;
@@ -158,7 +104,7 @@ int main(int argc, int* argv[])
 		case 7:
 		{
 			unsigned int* s = new unsigned int[arrayLength];
-			radixSort(t, s, unsignedKey, arrayLength, order);
+			uint32_RadixSort(t, s, unsignedKey, arrayLength, order);
 			delete[] t;
 			t = s;
 			break;
