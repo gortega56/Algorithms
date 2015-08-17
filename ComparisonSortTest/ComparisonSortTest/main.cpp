@@ -36,19 +36,36 @@ int main(int argc, int* argv[])
 {
 	bool exit = false;
 	while (!exit) {
+		bool _signed = false;
+		printf("Signed?\n");
+		std::cin >> _signed;
+
 		int arrayLength;
 		printf("Enter number of elements: ");
 		std::cin >> arrayLength;
 
 		srand((unsigned int)time(NULL));
 		printf("Array Length: %i \n", arrayLength);
-		printf("Unsorted Int: ");
-		unsigned int* t = new unsigned int[arrayLength];
-		for (int i = 0; i < arrayLength; i++) {
-			t[i] = rand() % 100;
-			printf("%u ", t[i]);
+
+		void* t = NULL;
+		if (_signed) {
+			printf("Unsorted Int: ");
+			t = new int[arrayLength];
+			for (int i = 0; i < arrayLength; i++) {
+				((int*)t)[i] = rand() % 100;
+				printf("%i ", ((int*)t)[i]);
+			}
+			printf("\n");
 		}
-		printf("\n");
+		else {
+			printf("Unsorted Int: ");
+			t = new unsigned int[arrayLength];
+			for (int i = 0; i < arrayLength; i++) {
+				((unsigned int*)t)[i] = rand() % 100;
+				printf("%u ", ((unsigned int*)t)[i]);
+			}
+			printf("\n");
+		}
 
 		int sortAlgorithm;
 		printf("Choose Sort: \n 0: Insertion Sort\n 1: Bubble Sort\n 2: Merge Sort\n 3: Quick Sort\n 4: Randomized Quick Sort\n 5: Heap Sort\n 6: Counting Sort\n 7: Radix Sort\n");
@@ -75,28 +92,28 @@ int main(int argc, int* argv[])
 		switch (sortAlgorithm)
 		{
 		case 0:
-			insertionSort(t, comparator, arrayLength, order);
+			(_signed) ? insertionSort((int*)t, comparator, arrayLength, order) : insertionSort((unsigned int*)t, unsignedComparator, arrayLength, order);
 			break;
 		case 1:
-			bubbleSort(t, comparator, arrayLength, order);
+			(_signed) ? bubbleSort((int*)t, comparator, arrayLength, order) : bubbleSort((unsigned int*)t, unsignedComparator, arrayLength, order);
 			break;
 		case 2:
-			mergeSort(t, comparator, 0, arrayLength, order);
+			(_signed) ? mergeSort((int*)t, comparator, 0, arrayLength, order) : mergeSort((unsigned int*)t, unsignedComparator, 0, arrayLength, order);
 			break;
 		case 3:
-			quickSort(t, comparator, 0, arrayLength, order);
+			(_signed) ? quickSort((int*)t, comparator, 0, arrayLength, order) : quickSort((unsigned int*)t, unsignedComparator, 0, arrayLength, order);
 			break;
 		case 4:
-			randomizedQuickSort(t, comparator, 0, arrayLength, order);
+			(_signed) ? randomizedQuickSort((int*)t, comparator, 0, arrayLength, order) : randomizedQuickSort((unsigned int*)t, unsignedComparator, 0, arrayLength, order);
 			break;
 		case 5:
-			heapSort(t, comparator, arrayLength, order);
+			(_signed) ? heapSort((int*)t, comparator, arrayLength, order) : heapSort((unsigned int*)t, unsignedComparator, arrayLength, order);
 			break;
 		case 6:
 		{
 			unsigned int* s = new unsigned int[arrayLength];
-			int k = cliqCity::maxIndex(t, comparator, arrayLength);
-			uint32_CountingSort(t, s, unsignedRank, t[k], arrayLength, order);
+			int k = cliqCity::maxIndex((unsigned int*)t, comparator, arrayLength);
+			countingSort((unsigned int*)t, s, unsignedRank, ((unsigned int*)t)[k], arrayLength, order);
 			delete[] t;
 			t = s;
 			break;
@@ -104,7 +121,7 @@ int main(int argc, int* argv[])
 		case 7:
 		{
 			unsigned int* s = new unsigned int[arrayLength];
-			uint32_RadixSort(t, s, unsignedKey, arrayLength, order);
+			uint32_RadixSort((unsigned int*)t, s, unsignedKey, arrayLength, order);
 			delete[] t;
 			t = s;
 			break;
@@ -116,11 +133,12 @@ int main(int argc, int* argv[])
 		bool correct = true;
 		for (int i = 1; i < arrayLength; i++) {
 			if (order == cliqCity::SortOrderAscending) {
-				correct = (compareInt(&t[i - 1], &t[i]) <= 0);
+				correct = (_signed) ? (comparator(((int*)t)[i - 1], ((int*)t)[i]) <= 0) : (comparator(((unsigned int*)t)[i - 1], ((unsigned int*)t)[i]) <= 0);
 			}
 			else {
-				correct = (compareInt(&t[i - 1], &t[i]) >= 0);
+				correct = (_signed) ? (comparator(((int*)t)[i - 1], ((int*)t)[i]) >= 0) : (comparator(((unsigned int*)t)[i - 1], ((unsigned int*)t)[i]) >= 0);
 			}
+		
 			if (!correct) {
 				printf("ERROR: Sort output is incorrect \n");
 				break;
@@ -129,7 +147,7 @@ int main(int argc, int* argv[])
 
 		printf("Sorted Int: ");
 		for (int i = 0; i < arrayLength; i++) {
-			printf("%u ", t[i]);
+			(_signed) ? printf("%i ", ((int*)t)[i]) : printf("%u ", ((unsigned int*)t)[i]);
 		}
 
 		printf("\n");

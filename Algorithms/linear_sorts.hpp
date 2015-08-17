@@ -20,7 +20,7 @@ namespace cliqCity
 		// Counting Sort: Uses auxiliary storage to count elements in array t. The counter maintains the number of elements in rank with each index. 
 		// The counter is then used to index back into the output array. Runs in linear time if max <= length^2.
 		template<class T, class R>
-		void uint32_CountingSort(T* const t, T* const output, const R& uint32_Rank, const uint32_t& max, const int& length, SortOrder order)
+		void countingSort(T* const t, T* const output, const R& uint32_Rank, const uint32_t& max, const int& length, SortOrder order)
 		{
 			// Initialize counter and set to zero.
 			uint32_t* counter = new uint32_t[max + 1];
