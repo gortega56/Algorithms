@@ -18,6 +18,7 @@ namespace cliqCity
 	namespace algorithm
 	{
 		// Counting Sort: Uses auxiliary storage to count elements in array t. The counter maintains the number of elements in rank with each index. 
+		// The rank of each element in t are assumed to be positive integers.
 		// The counter is then used to index back into the output array. Runs in linear time if max <= length^2.
 		template<class T, class R>
 		void countingSort(T* const t, T* const output, const R& uint32_Rank, const uint32_t& max, const int& length, SortOrder order)
@@ -60,6 +61,9 @@ namespace cliqCity
 			delete[] counter;
 		}
 		
+		// Counting Sort: Uses auxiliary storage to count elements in array t. The counter maintains the number of elements in rank with each index. 
+		// The rank of each element in t are assumed to be signed integers.
+		// The counter is then used to index back into the output array. Runs in linear time if range <= length^2.
 		template<class T, class R>
 		void countingSort(T* const t, T* const output, const R& signedRank, const int32_t& min, const int32_t& max, const int& length, SortOrder order)
 		{
@@ -103,6 +107,8 @@ namespace cliqCity
 			delete[] counter;
 		}
 
+		// Radix Sort (32 bit unsigned integers): Sorts t by sorting each byte of an unsigned integer key. 
+		// The keys are assumed to be of type uint32_t which requires 4 passes (1 per byte). Runs in O(n * k).
 		template<class T, class K>
 		void uint32_RadixSort(T* const t, T* const output, const K& uint32_Key, const int& length, SortOrder order)
 		{
