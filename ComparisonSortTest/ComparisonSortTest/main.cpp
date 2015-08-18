@@ -111,11 +111,21 @@ int main(int argc, int* argv[])
 			break;
 		case 6:
 		{
-			unsigned int* s = new unsigned int[arrayLength];
-			int k = cliqCity::maxIndex((unsigned int*)t, comparator, arrayLength);
-			countingSort((unsigned int*)t, s, unsignedRank, ((unsigned int*)t)[k], arrayLength, order);
-			delete[] t;
-			t = s;
+			if (_signed) {
+				int* s = new int[arrayLength];
+				int min, max;
+				cliqCity::minMaxIndices((int*)t, &min, &max, comparator, arrayLength);
+				countingSort((int*)t, s, rank, ((int*)t)[min], ((int*)t)[max], arrayLength, order);
+				delete[] t;
+				t = s;
+			}
+			else {
+				unsigned int* s = new unsigned int[arrayLength];
+				int k = cliqCity::maxIndex((unsigned int*)t, comparator, arrayLength);
+				countingSort((unsigned int*)t, s, unsignedRank, ((unsigned int*)t)[k], arrayLength, order);
+				delete[] t;
+				t = s;
+			}
 			break;
 		}
 		case 7:

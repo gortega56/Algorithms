@@ -60,6 +60,49 @@ namespace cliqCity
 			delete[] counter;
 		}
 		
+		template<class T, class R>
+		void countingSort(T* const t, T* const output, const R& signedRank, const int32_t& min, const int32_t& max, const int& length, SortOrder order)
+		{
+			// Initialize counter and set to zero.
+			int32_t range = max - min;
+			uint32_t* counter = new uint32_t[range + 1];
+			memset(counter, 0, sizeof(uint32_t) * (range + 1));
+
+			// Set counter[j] to number of elements equal to j
+			int32_t offset = min;
+			for (int j = 0; j < length; j++) {
+				counter[signedRank(t[j]) - offset]++;
+			}
+
+			if (order == SortOrderDescending) {
+				// Set counter[i] to number of elements greater than or equal to j
+				uint32_t* iter = &counter[range - 1];
+				uint32_t* end = (counter - 1);
+				while (iter != end) {
+					*iter += *(iter + 1);
+					iter--;
+				}
+			}
+			else {
+				// Set counter[i] to number of elements less than or equal to j
+				uint32_t* iter = &counter[1];
+				uint32_t* end = &counter[range + 1];
+				while (iter != end) {
+					*iter += *(iter - 1);
+					iter++;
+				}
+			}
+
+			// Index back into the output array
+			for (int j = length - 1; j >= 0; j--) {
+				uint32_t r = signedRank(t[j]) - offset;
+				output[counter[r] - 1] = t[j];
+				counter[r]--;
+			}
+
+			delete[] counter;
+		}
+
 		template<class T, class K>
 		void uint32_RadixSort(T* const t, T* const output, const K& uint32_Key, const int& length, SortOrder order)
 		{
