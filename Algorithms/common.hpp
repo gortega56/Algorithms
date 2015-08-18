@@ -35,5 +35,33 @@ namespace cliqCity
 
 		return max;
 	}
+
+	template<class T, class C>
+	inline int minIndex(T* const t, const C& compare, const int& length)
+	{
+		int min = 0;
+		for (int i = 1; i < length; i++) {
+			if (compare(t[i], t[min]) == -1) {
+				min = i;
+			}
+		}
+
+		return min;
+	}
+
+	template<class T, class C>
+	inline void minMaxIndices(T* const t, int* min, int* max, const C& compare, const int& length)
+	{
+		*min = *max = 0;
+		for (int i = 1; i < length; i++) {
+			if (compare(t[i], t[*min]) == -1) {
+				*min = i;
+			}
+
+			if (compare(t[i], t[*max]) == 1) {
+				*max = i;
+			}
+		}
+	}
 }
 
