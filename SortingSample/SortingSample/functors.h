@@ -1,6 +1,6 @@
 struct Comparator
 {
-	inline int operator()(const int& first, const int& second) const
+	inline int operator()(const float& first, const float& second) const
 	{
 		if (first < second) {
 			return -1;
@@ -32,9 +32,9 @@ struct UnsignedComparator
 
 struct Rank
 {
-	inline int operator()(const int& value) const
+	inline int operator()(const float& value) const
 	{
-		return value;
+		return *(int *)&value;
 	}
 } rank;
 
@@ -48,7 +48,7 @@ struct UnsignedRank
 
 struct Key
 {
-	inline int* operator()(int* const t, const int& index) const
+	inline float* operator()(float* const t, const int& index) const
 	{
 		return &t[index];
 	}

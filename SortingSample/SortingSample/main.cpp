@@ -34,6 +34,21 @@ int compareObject(const void* a, const void* b)
 
 int main(int argc, int* argv[])
 {
+	/*float a = 1.5;
+	float b = -1.6;
+
+	int* x = (int*)&a;
+	int* y = (int*)&b;
+
+
+	printf("float a: %f\n", a);
+	printf("int a: %i\n", *x);
+
+	printf("float b: %f\n", b);
+	printf("int b: %i\n", *y);
+
+	getchar();*/
+
 	bool exit = false;
 	while (!exit) {
 		bool _signed = false;
@@ -49,19 +64,19 @@ int main(int argc, int* argv[])
 
 		void* t = NULL;
 		if (_signed) {
-			printf("Unsorted Int: ");
-			t = new int[arrayLength];
+			printf("Unsorted: ");
+			t = new float[arrayLength];
 			for (int i = 0; i < arrayLength; i++) {
-				((int*)t)[i] = rand() % 100;
-				printf("%i ", ((int*)t)[i]);
+				((float*)t)[i] = -(float)(i + 1);// (i % 2 == 0) ? (float)i : -(float)i;// *0.75f;// ((float)rand() / (float)(RAND_MAX)) * -5.0f;
+				printf("%f ", ((float*)t)[i]);
 			}
 			printf("\n");
 		}
 		else {
-			printf("Unsorted Int: ");
+			printf("Unsorted: ");
 			t = new unsigned int[arrayLength];
 			for (int i = 0; i < arrayLength; i++) {
-				((unsigned int*)t)[i] = rand() % 100;
+				((unsigned int*)t)[i] = rand() % RAND_MAX;
 				printf("%u ", ((unsigned int*)t)[i]);
 			}
 			printf("\n");
@@ -92,36 +107,36 @@ int main(int argc, int* argv[])
 		switch (sortAlgorithm)
 		{
 		case 0:
-			(_signed) ? insertionSort((int*)t, comparator, arrayLength, order) : insertionSort((unsigned int*)t, unsignedComparator, arrayLength, order);
+			(_signed) ? insertionSort((float*)t, comparator, arrayLength, order) : insertionSort((unsigned int*)t, unsignedComparator, arrayLength, order);
 			break;
 		case 1:
-			(_signed) ? bubbleSort((int*)t, comparator, arrayLength, order) : bubbleSort((unsigned int*)t, unsignedComparator, arrayLength, order);
+			(_signed) ? bubbleSort((float*)t, comparator, arrayLength, order) : bubbleSort((unsigned int*)t, unsignedComparator, arrayLength, order);
 			break;
 		case 2:
-			(_signed) ? mergeSort((int*)t, comparator, 0, arrayLength, order) : mergeSort((unsigned int*)t, unsignedComparator, 0, arrayLength, order);
+			(_signed) ? mergeSort((float*)t, comparator, 0, arrayLength, order) : mergeSort((unsigned int*)t, unsignedComparator, 0, arrayLength, order);
 			break;
 		case 3:
-			(_signed) ? quickSort((int*)t, comparator, 0, arrayLength, order) : quickSort((unsigned int*)t, unsignedComparator, 0, arrayLength, order);
+			(_signed) ? quickSort((float*)t, comparator, 0, arrayLength, order) : quickSort((unsigned int*)t, unsignedComparator, 0, arrayLength, order);
 			break;
 		case 4:
-			(_signed) ? randomizedQuickSort((int*)t, comparator, 0, arrayLength, order) : randomizedQuickSort((unsigned int*)t, unsignedComparator, 0, arrayLength, order);
+			(_signed) ? randomizedQuickSort((float*)t, comparator, 0, arrayLength, order) : randomizedQuickSort((unsigned int*)t, unsignedComparator, 0, arrayLength, order);
 			break;
 		case 5:
-			(_signed) ? heapSort((int*)t, comparator, arrayLength, order) : heapSort((unsigned int*)t, unsignedComparator, arrayLength, order);
+			(_signed) ? heapSort((float*)t, comparator, arrayLength, order) : heapSort((unsigned int*)t, unsignedComparator, arrayLength, order);
 			break;
 		case 6:
 		{
 			if (_signed) {
-				int* s = new int[arrayLength];
+				float* s = new float[arrayLength];
 				int min, max;
-				cliqCity::minMaxIndices((int*)t, &min, &max, comparator, arrayLength);
-				countingSort((int*)t, s, rank, ((int*)t)[min], ((int*)t)[max], arrayLength, order);
+				cliqCity::minMaxIndices((float*)t, &min, &max, comparator, arrayLength);
+				countingSort((float*)t, s, rank, rank(((float*)t)[min]), rank(((float*)t)[max]), arrayLength, order);
 				delete[] t;
 				t = s;
 			}
 			else {
 				unsigned int* s = new unsigned int[arrayLength];
-				int k = cliqCity::maxIndex((unsigned int*)t, comparator, arrayLength);
+				int k = cliqCity::maxIndex((unsigned int*)t, unsignedComparator, arrayLength);
 				countingSort((unsigned int*)t, s, unsignedRank, ((unsigned int*)t)[k], arrayLength, order);
 				delete[] t;
 				t = s;
@@ -130,10 +145,18 @@ int main(int argc, int* argv[])
 		}
 		case 7:
 		{
-			unsigned int* s = new unsigned int[arrayLength];
-			uint32_RadixSort((unsigned int*)t, s, unsignedKey, arrayLength, order);
-			delete[] t;
-			t = s;
+			if (_signed) {
+				float* s = new float[arrayLength];
+				int32_RadixSort((float*)t, s, key, arrayLength, order);
+				delete[] t;
+				t = s;
+			}
+			else {
+				unsigned int* s = new unsigned int[arrayLength];
+				uint32_RadixSort((unsigned int*)t, s, unsignedKey, arrayLength, order);
+				delete[] t;
+				t = s;
+			}
 			break;
 		}
 		default:
@@ -143,10 +166,10 @@ int main(int argc, int* argv[])
 		bool correct = true;
 		for (int i = 1; i < arrayLength; i++) {
 			if (order == cliqCity::SortOrderAscending) {
-				correct = (_signed) ? (comparator(((int*)t)[i - 1], ((int*)t)[i]) <= 0) : (comparator(((unsigned int*)t)[i - 1], ((unsigned int*)t)[i]) <= 0);
+				correct = (_signed) ? (comparator(((float*)t)[i - 1], ((float*)t)[i]) <= 0) : (unsignedComparator(((unsigned int*)t)[i - 1], ((unsigned int*)t)[i]) <= 0);
 			}
 			else {
-				correct = (_signed) ? (comparator(((int*)t)[i - 1], ((int*)t)[i]) >= 0) : (comparator(((unsigned int*)t)[i - 1], ((unsigned int*)t)[i]) >= 0);
+				correct = (_signed) ? (comparator(((float*)t)[i - 1], ((float*)t)[i]) >= 0) : (unsignedComparator(((unsigned int*)t)[i - 1], ((unsigned int*)t)[i]) >= 0);
 			}
 		
 			if (!correct) {
@@ -155,9 +178,9 @@ int main(int argc, int* argv[])
 			}
 		}
 
-		printf("Sorted Int: ");
+		printf("Sorted: ");
 		for (int i = 0; i < arrayLength; i++) {
-			(_signed) ? printf("%i ", ((int*)t)[i]) : printf("%u ", ((unsigned int*)t)[i]);
+			(_signed) ? printf("%f ", ((float*)t)[i]) : printf("%u ", ((unsigned int*)t)[i]);
 		}
 
 		printf("\n");
