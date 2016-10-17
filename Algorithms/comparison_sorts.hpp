@@ -63,8 +63,8 @@ namespace cliqCity
 			}
 		
 			int sentinel = (order == SortOrderAscending) ? INT_MAX : INT_MIN;
-			left[n1] = sentinel;
-			right[n2] = sentinel;
+			left[n1] = (T)sentinel;
+			right[n2] = (T)sentinel;
 			
 			i = 0;
 			j = 0;

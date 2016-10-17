@@ -12,7 +12,8 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{EEB6A847-827C-42CC-9B9D-A26F8A96FAF1}</ProjectGuid>
-    <RootNamespace>ComparisonSortTest</RootNamespace>
+    <RootNamespace>SortingSample</RootNamespace>
+    <ProjectName>SortingSample</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
