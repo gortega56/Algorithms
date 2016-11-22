@@ -5,6 +5,8 @@
 // Gabriel Ortega
 
 #pragma once
+#ifndef COMMON_HPP
+#define COMMON_HPP
 
 namespace cliqCity
 {
@@ -65,3 +67,4 @@ namespace cliqCity
 	}
 }
 
+#endif

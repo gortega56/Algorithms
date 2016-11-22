@@ -5,6 +5,8 @@
 #include <ctime>
 #include <iostream>
 #include "functors.h"
+#include "counting_sort.h"
+#include <random>
 
 using namespace cliqCity::algorithm;
 
@@ -34,26 +36,25 @@ int compareObject(const void* a, const void* b)
 
 int main(int argc, int* argv[])
 {
-	/*float a = 1.5;
-	float b = -1.6;
-
-	int* x = (int*)&a;
-	int* y = (int*)&b;
-
-
-	printf("float a: %f\n", a);
-	printf("int a: %i\n", *x);
-
-	printf("float b: %f\n", b);
-	printf("int b: %i\n", *y);
-
-	getchar();*/
+	std::default_random_engine gen;
+	std::uniform_int_distribution<int> dist(-1, 1);
 
 	bool exit = false;
 	while (!exit) {
+		bool useFloats = false;
+		printf("Floating point?\n");
+		std::cin >> useFloats;
+
 		bool _signed = false;
-		printf("Signed?\n");
-		std::cin >> _signed;
+		if (useFloats)
+		{
+			_signed = true;
+		}
+		else
+		{
+			printf("Signed?\n");
+			std::cin >> _signed;
+		}
 
 		int arrayLength;
 		printf("Enter number of elements: ");
@@ -63,23 +64,41 @@ int main(int argc, int* argv[])
 		printf("Array Length: %i \n", arrayLength);
 
 		void* t = NULL;
-		if (_signed) {
-			printf("Unsorted: ");
+			
+		printf("Unsorted: ");
+		if (useFloats) {
 			t = new float[arrayLength];
 			for (int i = 0; i < arrayLength; i++) {
-				((float*)t)[i] = -(float)(i + 1);// (i % 2 == 0) ? (float)i : -(float)i;// *0.75f;// ((float)rand() / (float)(RAND_MAX)) * -5.0f;
+				((float*)t)[i] = /*-(int)(i + 1);*/ (i % 2 == 0) ? (float)i : -(float)i;// *0.75f;// ((float)rand() / (float)(RAND_MAX)) * -5.0f;
 				printf("%f ", ((float*)t)[i]);
 			}
 			printf("\n");
+
+	/*		for (int i = 0; i < arrayLength; i++) {
+				printf("%u ", cliqCity::flip(((uint32_t*)t)[i]));
+			}*/
+			printf("\n");
 		}
 		else {
-			printf("Unsorted: ");
-			t = new unsigned int[arrayLength];
-			for (int i = 0; i < arrayLength; i++) {
-				((unsigned int*)t)[i] = rand() % RAND_MAX;
-				printf("%u ", ((unsigned int*)t)[i]);
+			if (_signed)
+			{
+				t = new int[arrayLength];
+				for (int i = 0; i < arrayLength; i++) {
+					((int*)t)[i] = rand() % RAND_MAX * dist(gen);
+					printf("%d ", ((int*)t)[i]);
+				}
+				printf("\n");
 			}
-			printf("\n");
+			else
+			{
+				t = new unsigned int[arrayLength];
+				for (int i = 0; i < arrayLength; i++) {
+					((unsigned int*)t)[i] = rand() % RAND_MAX;
+					printf("%u ", ((unsigned int*)t)[i]);
+				}
+				printf("\n");
+			}
+			
 		}
 
 		int sortAlgorithm;
@@ -145,18 +164,29 @@ int main(int argc, int* argv[])
 		}
 		case 7:
 		{
-			if (_signed) {
-				float* s = new float[arrayLength];
-				int32_RadixSort((float*)t, s, key, arrayLength, order);
-				delete[] t;
-				t = s;
+
+			void* s;
+			if (useFloats) {
+				s = new float[arrayLength];
+				RadixSort<float, float>()((float*)t, arrayLength, (float*)s, [](f32 n) { return n; });
 			}
 			else {
-				unsigned int* s = new unsigned int[arrayLength];
-				uint32_RadixSort((unsigned int*)t, s, unsignedKey, arrayLength, order);
-				delete[] t;
-				t = s;
+				if (_signed)
+				{
+					s = new int[arrayLength];
+					//RadixSort<unsigned int, unsigned int>()((unsigned int*)t, (unsigned int*)s, uKey, arrayLength);
+					RadixSort<i32, i32>()((i32*)t, arrayLength, (i32*)s, [](i32 n) { return n; });
+				}
+				else
+				{
+					s = new unsigned int[arrayLength];
+					//RadixSort<unsigned int, unsigned int>()((unsigned int*)t, (unsigned int*)s, uKey, arrayLength);
+					RadixSort<u32, u32>()((u32*)t, arrayLength, (u32*)s, [](u32 n) { return n; });
+				}
 			}
+
+			delete[] t;
+			t = s;
 			break;
 		}
 		default:
@@ -166,10 +196,10 @@ int main(int argc, int* argv[])
 		bool correct = true;
 		for (int i = 1; i < arrayLength; i++) {
 			if (order == cliqCity::SortOrderAscending) {
-				correct = (_signed) ? (comparator(((float*)t)[i - 1], ((float*)t)[i]) <= 0) : (unsignedComparator(((unsigned int*)t)[i - 1], ((unsigned int*)t)[i]) <= 0);
+				correct = (useFloats) ? (comparator(((float*)t)[i - 1], ((float*)t)[i]) <= 0) : (_signed) ? (icomp(((int*)t)[i - 1], ((int*)t)[i]) <= 0) : (ucomp(((unsigned int*)t)[i - 1], ((unsigned int*)t)[i]) <= 0);
 			}
 			else {
-				correct = (_signed) ? (comparator(((float*)t)[i - 1], ((float*)t)[i]) >= 0) : (unsignedComparator(((unsigned int*)t)[i - 1], ((unsigned int*)t)[i]) >= 0);
+				correct = (useFloats) ? (comparator(((float*)t)[i - 1], ((float*)t)[i]) >= 0) : (_signed) ? (icomp(((int*)t)[i - 1], ((int*)t)[i]) <= 0) : (ucomp(((unsigned int*)t)[i - 1], ((unsigned int*)t)[i]) >= 0);
 			}
 		
 			if (!correct) {
@@ -180,7 +210,7 @@ int main(int argc, int* argv[])
 
 		printf("Sorted: ");
 		for (int i = 0; i < arrayLength; i++) {
-			(_signed) ? printf("%f ", ((float*)t)[i]) : printf("%u ", ((unsigned int*)t)[i]);
+			(useFloats) ? printf("%f ", ((float*)t)[i]) : (_signed) ? printf("%d ", ((int*)t)[i]) : printf("%u ", ((unsigned int*)t)[i]);
 		}
 
 		printf("\n");

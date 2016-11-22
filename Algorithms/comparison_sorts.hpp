@@ -139,8 +139,8 @@ namespace cliqCity
 			if (end - begin > 1) {
 				exchange(t[end - 1], t[rand() % (end - 1)]);
 				int p = partition(t, comparator, begin, end, order);
-				quickSort(t, comparator, begin, p, order);
-				quickSort(t, comparator, p + 1, end, order);
+				randomizedQuickSort(t, comparator, begin, p, order);
+				randomizedQuickSort(t, comparator, p + 1, end, order);
 			}
 		}
 
