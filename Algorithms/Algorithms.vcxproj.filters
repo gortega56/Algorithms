@@ -21,13 +21,13 @@
     <ClInclude Include="comparison_sorts.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="linear_sorts.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="counting_sort.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="typedefs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RadixSort.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CountingSort.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

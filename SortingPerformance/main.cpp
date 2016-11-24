@@ -3,7 +3,7 @@
 #include <climits>
 
 #include "comparison_sorts.hpp"
-#include "linear_sorts.hpp"
+#include "RadixSort.hpp"
 #include "../SortingSample/SortingSample/functors.h"
 
 using namespace cliqCity::algorithm;

@@ -1,9 +1,3 @@
-// common.hpp
-//
-// Common utility functions
-//
-// Gabriel Ortega
-
 #pragma once
 #ifndef COMMON_HPP
 #define COMMON_HPP
@@ -25,12 +19,12 @@ namespace cliqCity
 		b = t;
 	}
 
-	template<class T, class C>
-	inline int maxIndex(T* const t, const C& compare, const int& length)
+	template<class Type, class Compare>
+	inline int maxIndex(Type* const in, const Compare& compare, const int& length)
 	{
 		int max = 0;
 		for (int i = 1; i < length; i++) {
-			if (compare(t[i], t[max]) == 1) {
+			if (compare(in[i], in[max]) == 1) {
 				max = i;
 			}
 		}

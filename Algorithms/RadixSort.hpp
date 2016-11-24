@@ -1,16 +1,7 @@
-// linear_sorts.hpp
-//
-// Linear Sort Algorithms
-//
-// Gabriel Ortega
-
 #pragma once 
+#ifndef RADIXSORT_HPP
+#define RADIXSORT_HPP
 #include "common.hpp"
-#include <stdio.h>
-
-#include <iostream>
-#include <bitset>
-#include <climits>
 #include <stdint.h>
 
 #ifndef TYPEDEFS_H
@@ -27,23 +18,38 @@ namespace cliqCity
 	namespace algorithm
 	{
 		template<class Type, typename Key>
-		class RadixSort
+		class Radix
 		{
 		public:
-			RadixSort() {}
+			Radix(Type* const in, const int& length, Type* const out) : _in(in), _out(out), _len(length)  {}
+            Radix(std::vector<Type> in, std::vector<Type>* out) : _in(in.data), _out(out.data), _len(static_cast<int>(in.size())) {}
+
+            template<class Functor>
+            Radix Sort(Functor key)
+            {
+                return Sort(_in, _len, _out, key);
+            }
 
 			template<class Functor>
-			void operator()(Type* const in, const int& length, Type* out, Functor key)
+			Radix* Sort(Type* const in, const int& length, Type* out, Functor key)
 			{
 				throw UnsupportedTypeException;
 			}
 
 			template<class Functor>
-			void operator()(std::vector<Type> in, std::vector<Type>* out, Functor key)
+			Radix* Sort(std::vector<Type> in, std::vector<Type>* out, Functor key)
 			{
 				out->resize(in.size());
 				return RadixSort(in.data(), in.size(), out.data(), key);
 			}
+
+            template<class Functor>
+            static void Sort()
+
+        private:
+            Type* _in;
+            Type* _out;
+            int _len;
 		};
 
 		template<class Type>
@@ -205,18 +211,19 @@ namespace cliqCity
 		};
 
 		template<class Type>
-		struct RadixSort<Type, float>
+		struct RadixSort<Type, f32>
 		{
 			template<class Functor>
 			void operator()(Type* const in, const int& length, Type* out, Functor functor)
 			{
-				u32 counter[256 * 4];
-				memset(counter, 0, 256 * 4 * sizeof(u32));
+				u32 counter[256 * 4 + 128];
+				memset(counter, 0, (256 * 4 + 128) * sizeof(u32));
 
 				u32* c0 = &counter[0];
 				u32* c1 = &counter[256];
 				u32* c2 = &counter[512];
 				u32* c3 = &counter[768];
+                u32* no = &counter[1024];   // Negative offsets counted separately
 
 				u32 nl = 0;	
 				u8* ub = nullptr;
@@ -231,9 +238,10 @@ namespace cliqCity
 					c1[*(ub + 1)]++;
 					c2[*(ub + 2)]++;
 					c3[*(ub + 3)]++;
-					
+
 					if (*(ub + 3) > 127)
 					{
+                        no[*(ub + 3) - 128]++;
 						nl++;
 					}
 				}
@@ -245,22 +253,19 @@ namespace cliqCity
 					c2[i] += c2[i - 1];
 				}
 
+                // Offset positive numbers by negative length
 				c3[0] += nl;
 				for (int i = 1; i < 128; i++)
 				{
 					c3[i] += c3[i - 1];
 				}
 
-				c3[255] = 0;
-				for (int i = 254; i > 127; --i)
-				{
-					c3[i] += c3[i + 1];
-				}
-
-	/*			for (int i = 128; i < 256; ++i)
-				{
-					c3[i] += c3[i - 128];
-				}*/
+                // Get offsets for negative numbers
+                no[0] = 0;
+                for (int i = 126; i >= 0; --i)
+                {
+                    no[i] += no[i + 1];
+                }
 
 				size_t size = sizeof(Type) * length;
 				Type* swap = new Type[length];
@@ -268,54 +273,34 @@ namespace cliqCity
 
 				u32* c = nullptr;
 
-				// Radix Passes	
+                // Radix Passes	
 				for (int pass = 0; pass < 3; pass++)
 				{
-					// Get the counter for the current pass
 					c = &counter[(pass << 8)];
 
 					for (int i = length - 1; i >= 0; i--)
 					{
 						fk = functor(swap[i]);
-						ub = reinterpret_cast<u8*>(&fk) + pass;
 
-						out[c[*(ub)] - 1] = swap[i];
-						c[*(ub)]--;
+						u32 uk = *(reinterpret_cast<u8*>(&fk) + pass);
+						out[c[uk] - 1] = swap[i];
+						c[uk]--;
 					}
 
-					
 					memcpy_s(swap, size, out, size);
-
-					for (int i = 0; i < length; ++i)
-					{
-						LOG << "Pass \t" << pass << " Key: " << out[i] << "\t" << (int)*(reinterpret_cast<u8*>(&out[i]) + pass) << std::endl;
-					}
-
 				}
 
+                // Last pass for negatives
 				for (int i = length - 1; i >= 0; i--)
 				{
 					fk = functor(swap[i]);
-					ub = reinterpret_cast<u8*>(&fk) + 3;
+					
+                    u32 uk = *(reinterpret_cast<u8*>(&fk) + 3);
 
-					/*out[c3[*(ub)] - 1] = swap[i];
-					c3[*(ub)]--;*/
+                    if (uk < 128) { out[c3[uk] - 1]     = swap[i]; }
+                    else { out[no[uk - 128] - c3[uk]]   = swap[i]; }
 
-					if (*ub < 128)
-					{
-						out[c3[*(ub)] - 1] = swap[i];
-						c3[*(ub)]--;
-					}
-					else
-					{
-						out[c3[*(ub)] - 1] = swap[i];
-						c3[*(ub)]--;
-					}
-				}
-
-				for (int i = 0; i < length; ++i)
-				{
-					LOG << "Pass \t" << 3 << " Key: " << out[i] << "\t" << (int)*(reinterpret_cast<u8*>(&out[i]) + 3) << std::endl;
+                    c3[uk]--;
 				}
 
 				delete[] swap;
@@ -335,3 +320,5 @@ namespace cliqCity
 		return f ^ mask;
 	}
 }
+
+#endif

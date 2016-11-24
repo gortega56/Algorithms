@@ -1,11 +1,11 @@
 #include "comparison_sorts.hpp"
-#include "linear_sorts.hpp"
+#include "RadixSort.hpp"
 #include <cstdlib>
 #include <stdio.h>
 #include <ctime>
 #include <iostream>
 #include "functors.h"
-#include "counting_sort.h"
+#include "CountingSort.h"
 #include <random>
 
 using namespace cliqCity::algorithm;
@@ -34,6 +34,8 @@ int compareObject(const void* a, const void* b)
 	}
 }
 
+#define NTEST 0
+
 int main(int argc, int* argv[])
 {
 	std::default_random_engine gen;
@@ -41,7 +43,9 @@ int main(int argc, int* argv[])
 
 	bool exit = false;
 	while (!exit) {
-		bool useFloats = false;
+
+#if NTEST
+		bool useFloats = true;
 		printf("Floating point?\n");
 		std::cin >> useFloats;
 
@@ -62,7 +66,11 @@ int main(int argc, int* argv[])
 
 		srand((unsigned int)time(NULL));
 		printf("Array Length: %i \n", arrayLength);
-
+#else
+        bool useFloats = true;
+        bool _signed = true;
+        int arrayLength = 20;
+#endif
 		void* t = NULL;
 			
 		printf("Unsorted: ");
@@ -101,6 +109,7 @@ int main(int argc, int* argv[])
 			
 		}
 
+#if NTEST
 		int sortAlgorithm;
 		printf("Choose Sort: \n 0: Insertion Sort\n 1: Bubble Sort\n 2: Merge Sort\n 3: Quick Sort\n 4: Randomized Quick Sort\n 5: Heap Sort\n 6: Counting Sort\n 7: Radix Sort\n");
 		std::cin >> sortAlgorithm;
@@ -108,6 +117,10 @@ int main(int argc, int* argv[])
 		int sortOrder;
 		printf("Choose Sort Order: \n 0: Descending\n 1: Ascending\n");
 		std::cin >> sortOrder;
+#else
+        int sortAlgorithm = 7;
+        int sortOrder = cliqCity::SortOrderAscending;
+#endif
 
 		cliqCity::SortOrder order;
 		switch (sortOrder)
