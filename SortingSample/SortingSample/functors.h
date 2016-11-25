@@ -54,9 +54,9 @@ struct UnsignedComparator
 
 struct Rank
 {
-	inline int operator()(const float& value) const
+	inline int operator()(const int& value) const
 	{
-		return *(int *)&value;
+		return value;
 	}
 } rank;
 

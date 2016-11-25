@@ -41,6 +41,11 @@ int main(int argc, int* argv[])
 	std::default_random_engine gen;
 	std::uniform_int_distribution<int> dist(-1, 1);
 
+
+    time_t now;
+    time(&now);
+    srand(static_cast<unsigned int>(now));
+
 	bool exit = false;
 	while (!exit) {
 
@@ -67,8 +72,8 @@ int main(int argc, int* argv[])
 		srand((unsigned int)time(NULL));
 		printf("Array Length: %i \n", arrayLength);
 #else
-        bool useFloats = true;
-        bool _signed = true;
+        bool useFloats = 1;
+        bool _signed = 1;
         int arrayLength = 20;
 #endif
 		void* t = NULL;
@@ -77,7 +82,7 @@ int main(int argc, int* argv[])
 		if (useFloats) {
 			t = new float[arrayLength];
 			for (int i = 0; i < arrayLength; i++) {
-				((float*)t)[i] = /*-(int)(i + 1);*/ (i % 2 == 0) ? (float)i : -(float)i;// *0.75f;// ((float)rand() / (float)(RAND_MAX)) * -5.0f;
+				((float*)t)[i] =  (float)(rand() % 100) / 5.0f - 5.0f;
 				printf("%f ", ((float*)t)[i]);
 			}
 			printf("\n");
@@ -159,19 +164,11 @@ int main(int argc, int* argv[])
 		case 6:
 		{
 			if (_signed) {
-				float* s = new float[arrayLength];
-				int min, max;
-				cliqCity::minMaxIndices((float*)t, &min, &max, comparator, arrayLength);
-				countingSort((float*)t, s, rank, rank(((float*)t)[min]), rank(((float*)t)[max]), arrayLength, order);
-				delete[] t;
-				t = s;
+				
+                Count<int, int>((int*)t, arrayLength).Sort(rank);
 			}
 			else {
-				unsigned int* s = new unsigned int[arrayLength];
-				int k = cliqCity::maxIndex((unsigned int*)t, unsignedComparator, arrayLength);
-				countingSort((unsigned int*)t, s, unsignedRank, ((unsigned int*)t)[k], arrayLength, order);
-				delete[] t;
-				t = s;
+                Count<unsigned int, unsigned int>((unsigned int*)t, arrayLength).Sort(unsignedRank);
 			}
 			break;
 		}
@@ -179,27 +176,23 @@ int main(int argc, int* argv[])
 		{
 
 			void* s;
-			if (useFloats) {
-				s = new float[arrayLength];
-				RadixSort<float, float>()((float*)t, arrayLength, (float*)s, [](f32 n) { return n; });
+			if (useFloats) 
+            {
+                Radix<float, float>((float*)t, arrayLength).Sort(fKey);
 			}
 			else {
 				if (_signed)
 				{
-					s = new int[arrayLength];
-					//RadixSort<unsigned int, unsigned int>()((unsigned int*)t, (unsigned int*)s, uKey, arrayLength);
-					RadixSort<i32, i32>()((i32*)t, arrayLength, (i32*)s, [](i32 n) { return n; });
+					Radix<i32, i32>((i32*)t, arrayLength).Sort([](i32 n) { return n; });
 				}
 				else
 				{
-					s = new unsigned int[arrayLength];
-					//RadixSort<unsigned int, unsigned int>()((unsigned int*)t, (unsigned int*)s, uKey, arrayLength);
-					RadixSort<u32, u32>()((u32*)t, arrayLength, (u32*)s, [](u32 n) { return n; });
-				}
+                    Radix<u32, u32>((u32*)t, arrayLength).Sort([](u32 n) {return n; });
+                }
 			}
 
-			delete[] t;
-			t = s;
+		/*	delete[] t;
+			t = s;*/
 			break;
 		}
 		default:

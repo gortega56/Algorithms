@@ -2,185 +2,150 @@
 #ifndef COUNTINGSORT_HPP
 #define COUNTINGSORT_HPP
 
-#ifndef COMMON_HPP
-#include "common.hpp"
-#endif
+#include <vector>
+#include <algorithm>
 
 namespace cliqCity
 {
-	namespace algorithm
-	{
-        //template <class Type>
-        //__interface LinearSort
-        //{
-        //public:
-        //    template<class Functor, typename Key>
-        //    void operator()(Type* const in, const int& length, Type* const out, Functor func);
-        //};
+    namespace algorithm
+    {
+        template<class Type>
+        class count
+        {
+        public:
+            count(Type* const in, const int& length) : in(in), length(length)
+            {
+                swap = new Type[length];
+            }
 
-        //template<class Type>
-        //class CountSort : LinearSort<Type>
-        //{
-        //public:
-        //    template <class Functor, typename Key>
-        //    CountSort(Type* const in, const int& length, Type* const out, Functor func)
-        //    {
-        //        // Initialize counter and set to zero.
-        //        uint32_t* counter = new uint32_t[max + 1];
-        //        memset(counter, 0, sizeof(uint32_t) * (max + 1));
+            count(std::vector<Type>& in) : count::count(in.data, (int)in.size())
+            {
 
-        //        // Set counter[j] to number of elements equal to j
-        //        for (int j = 0; j < length; j++) {
-        //            counter[uint32_Rank(t[j])]++;
-        //        }
+            }
 
-        //        if (order == SortOrderDescending) {
-        //            // Set counter[i] to number of elements greater than or equal to j
-        //            uint32_t* iter = &counter[max - 1];
-        //            uint32_t* end = (counter - 1);
-        //            while (iter != end) {
-        //                *iter += *(iter + 1);
-        //                iter--;
-        //            }
-        //        }
-        //        else {
-        //            // Set counter[i] to number of elements less than or equal to j
-        //            uint32_t* iter = &counter[1];
-        //            uint32_t* end = &counter[max + 1];
-        //            while (iter != end) {
-        //                *iter += *(iter - 1);
-        //                iter++;
-        //            }
-        //        }
+            ~count()
+            {
+                delete[] swap;
+            }
 
-        //        // Index back into the output array
-        //        for (int j = length - 1; j >= 0; j--) {
-        //            uint32_t r = uint32_Rank(t[j]);
-        //            output[counter[r] - 1] = t[j];
-        //            counter[r]--;
-        //        }
+        protected:
+            Type* in;
+            Type* swap;
+            int length;
+        };
 
-        //        delete[] counter;
-        //    }
+        template<class Type, typename Key>
+        class Count
+        {
 
-        //private:
-        //    template<class Compare>
-        //    inline int findMax(Type* const in, const Compare& compare, const int& length)
-        //    {
-        //        int max = 0;
-        //        for (int i = 1; i < length; i++) {
-        //            if (compare(t[i], t[max]) == 1) {
-        //                max = i;
-        //            }
-        //        }
+        };
 
-        //        return max;
-        //    }
+        // Counting Sort: Uses auxiliary storage to count elements in array t. The counter maintains the number of elements in rank with each index. 
+        // The rank of each element in t are assumed to be positive integers.
+        // The counter is then used to index back into the output array. Runs in linear time if max <= length^2.
+        template<class Type>
+        class Count<Type, u32> : public count<Type>
+        {
+        public:
+            using count<Type>::count;
 
-        //    template<class T, class C>
-        //    inline int findMin(T* const t, const C& compare, const int& length)
-        //    {
-        //        int min = 0;
-        //        for (int i = 1; i < length; i++) {
-        //            if (compare(t[i], t[min]) == -1) {
-        //                min = i;
-        //            }
-        //        }
+            template<class Functor>
+            Count& Sort(Functor func)
+            {
+                u32 max = 0;
+                for (int i = 0; i < length; ++i)
+                {
+                    max = std::max(func(in[i]), max);
+                }
 
-        //        return min;
-        //    }
-        //};
+                // Initialize counter and set to zero.
+                u32* counter = new u32[max + 1];
+                memset(counter, 0, sizeof(u32) * (max + 1));
+
+                // Set counter[j] to number of elements equal to j
+                for (int j = 0; j < length; j++) {
+                    counter[func(in[j])]++;
+                }
+
+                // Set counter[i] to number of elements less than or equal to j
+                u32* iter = &counter[1];
+                u32* end = &counter[max + 1];
+                while (iter != end) {
+                    *iter += *(iter - 1);
+                    iter++;
+                }
 
 
-		// Counting Sort: Uses auxiliary storage to count elements in array t. The counter maintains the number of elements in rank with each index. 
-		// The rank of each element in t are assumed to be positive integers.
-		// The counter is then used to index back into the output array. Runs in linear time if max <= length^2.
-		template<class T, class R>
-		void countingSort(T* const t, T* const output, const R& uint32_Rank, const uint32_t& max, const int& length, SortOrder order)
-		{
-			// Initialize counter and set to zero.
-			uint32_t* counter = new uint32_t[max + 1];
-			memset(counter, 0, sizeof(uint32_t) * (max + 1));
+                // Index back into the output array
+                for (int j = length - 1; j >= 0; j--) {
+                    u32 r = func(in[j]);
+                    swap[counter[r] - 1] = in[j];
+                    counter[r]--;
+                }
 
-			// Set counter[j] to number of elements equal to j
-			for (int j = 0; j < length; j++) {
-				counter[uint32_Rank(t[j])]++;
-			}
+                size_t size = sizeof(Type) * length;
+                memcpy_s(in, size, swap, size);
 
-			if (order == SortOrderDescending) {
-				// Set counter[i] to number of elements greater than or equal to j
-				uint32_t* iter = &counter[max - 1];
-				uint32_t* end = (counter - 1);
-				while (iter != end) {
-					*iter += *(iter + 1);
-					iter--;
-				}
-			}
-			else {
-				// Set counter[i] to number of elements less than or equal to j
-				uint32_t* iter = &counter[1];
-				uint32_t* end = &counter[max + 1];
-				while (iter != end) {
-					*iter += *(iter - 1);
-					iter++;
-				}
-			}
+                delete[] counter;
 
-			// Index back into the output array
-			for (int j = length - 1; j >= 0; j--) {
-				uint32_t r = uint32_Rank(t[j]);
-				output[counter[r] - 1] = t[j];
-				counter[r]--;
-			}
+                return *this;
+            }
+        };
 
-			delete[] counter;
-		}
+        // Counting Sort: Uses auxiliary storage to count elements in array t. The counter maintains the number of elements in rank with each index. 
+        // The rank of each element in t are assumed to be signed integers.
+        // The counter is then used to index back into the output array. Runs in linear time if range <= length^2.
+        template<class Type>
+        class Count<Type, i32> : public count<Type>
+        {
+        public:
+            using count<Type>::count;
 
-		// Counting Sort: Uses auxiliary storage to count elements in array t. The counter maintains the number of elements in rank with each index. 
-		// The rank of each element in t are assumed to be signed integers.
-		// The counter is then used to index back into the output array. Runs in linear time if range <= length^2.
-		template<class T, class R>
-		void countingSort(T* const t, T* const output, const R& signedRank, const int32_t& min, const int32_t& max, const int& length, SortOrder order)
-		{
-			// Initialize counter and set to zero.
-			int32_t range = max - min;
-			uint32_t* counter = new uint32_t[range + 1];
-			memset(counter, 0, sizeof(uint32_t) * (range + 1));
+            template<class Functor>
+            Count& Sort(Functor func)
+            {
+                i32 max = INT32_MIN;
+                i32 min = INT32_MAX;
+                for (int i = 0; i < length; ++i)
+                {
+                    max = std::max(func(in[i]), max);
+                    min = std::min(func(in[i]), min);
+                }
 
-			// Set counter[j] to number of elements equal to j
-			for (int j = 0; j < length; j++) {
-				counter[signedRank(t[j]) - min]++;
-			}
+                // Initialize counter and set to zero.
+                i32 range = max - min;
+                u32* counter = new u32[range + 1];
+                memset(counter, 0, sizeof(u32) * (range + 1));
 
-			if (order == SortOrderDescending) {
-				// Set counter[i] to number of elements greater than or equal to j
-				uint32_t* iter = &counter[range - 1];
-				uint32_t* end = (counter - 1);
-				while (iter != end) {
-					*iter += *(iter + 1);
-					iter--;
-				}
-			}
-			else {
-				// Set counter[i] to number of elements less than or equal to i
-				uint32_t* iter = &counter[1];
-				uint32_t* end = &counter[range + 1];
-				while (iter != end) {
-					*iter += *(iter - 1);
-					iter++;
-				}
-			}
+                // Set counter[j] to number of elements equal to j
+                for (int j = 0; j < length; j++) {
+                    counter[func(in[j]) - min]++;
+                }
 
-			// Index back into the output array
-			for (int j = length - 1; j >= 0; j--) {
-				uint32_t r = signedRank(t[j]) - min;
-				output[counter[r] - 1] = t[j];
-				counter[r]--;
-			}
+                // Set counter[i] to number of elements less than or equal to i
+                u32* iter = &counter[1];
+                u32* end = &counter[range + 1];
+                while (iter != end) {
+                    *iter += *(iter - 1);
+                    iter++;
+                }
 
-			delete[] counter;
-		}
-	}
+                // Index back into the output array
+                for (int j = length - 1; j >= 0; j--) {
+                    u32 r = func(in[j]) - min;
+                    swap[counter[r] - 1] = in[j];
+                    counter[r]--;
+                }
+
+                size_t size = sizeof(Type) * length;
+                memcpy_s(in, size, swap, size);
+
+                delete[] counter;
+
+                return *this;
+            }
+        };
+    }
 }
 
 #endif
