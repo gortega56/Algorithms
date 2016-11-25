@@ -42,62 +42,6 @@ namespace cliqCity
 			}
 		}
 
-		// Merge: A subroutine used by Merge Sort. Uses auxiliary storage to merge to sorted arrays. Has linear complexity
-		// Note: r is the exclusive last index of array t. It is NOT the length.
-		template<class T, class C>
-		void merge(T* const t, const C& comparator, const int& p, const int& q, const int& r, SortOrder order)
-		{
-			int n1 = q - p;
-			int n2 = r - q;
-			T* left		= new T[n1 + 1];
-			T* right	= new T[n2 + 1];
-
-			int i = 0;
-			for (; i < n1; i++) {
-				left[i] = t[p + i];
-			}
-
-			int j = 0;
-			for (; j < n2; j++) {
-				right[j] = t[q + j]; 
-			}
-		
-			int sentinel = (order == SortOrderAscending) ? INT_MAX : INT_MIN;
-			left[n1] = (T)sentinel;
-			right[n2] = (T)sentinel;
-			
-			i = 0;
-			j = 0;
-
-			for (int k = p; k < r; k++) {
-				int result = comparator(left[i], right[j]);
-				if ((result <= 0 && order == SortOrderAscending) || (result >= 0 && order == SortOrderDescending)) {
-					t[k] = left[i];
-					i++;
-				}
-				else {
-					t[k] = right[j];
-					j++;
-				}
-			}
-
-			delete[] left;
-			delete[] right;
-		}
-
-		// Merge Sort: Recursively splits array into tow subarrays of n/2 length. Uses Merge subroutine. Has complexity O(nlgn)
-		// Note: r is the exclusive last index of array t.
-		template<class T, class C>
-		void mergeSort(T* const t, const C& comparator, const int& p, const int& r, SortOrder order)
-		{
-			if (r - p > 1) {
-				int q = (p + r) / 2;
-				mergeSort(t, comparator, p, q, order);
-				mergeSort(t, comparator, q, r, order);
-				merge(t, comparator, p, q, r, order);
-			}
-		}
-
 		// Partition: A subroutine used by Quick Sort. Partitions array t into subarrays of values less than and greater than the partition element. Always uses last element as partition.
 		// TO DO: Optimize for non distinct elements by returning a partition range. Median of 3 partition.
 		template<class T, class C>

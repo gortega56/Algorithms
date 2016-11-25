@@ -1,5 +1,6 @@
 #include "comparison_sorts.hpp"
-#include "RadixSort.hpp"
+#include "MergeSort.h"
+#include "RadixSort.h"
 #include <cstdlib>
 #include <stdio.h>
 #include <ctime>
@@ -7,8 +8,44 @@
 #include "functors.h"
 #include "CountingSort.h"
 #include <random>
+#include <string>
 
 using namespace cliqCity::algorithm;
+
+namespace cliqCity
+{
+    namespace algorithm
+    {
+        template<>
+        struct LessThan<Custom<float>>
+        {
+            bool operator()(const Custom<float>& lhs, const Custom<float>& rhs)
+            {
+                return lhs.key < rhs.key;
+            }
+        };
+
+        template<>
+        struct LessThan<Custom<int>>
+        {
+            bool operator()(const Custom<int>& lhs, const Custom<int>& rhs)
+            {
+                return lhs.key < rhs.key;
+            }
+        };
+
+        template<>
+        struct LessThan<Custom<unsigned int>>
+        {
+            bool operator()(const Custom<unsigned int>& lhs, const Custom<unsigned int>& rhs)
+            {
+                return lhs.key < rhs.key;
+            }
+        };
+    }
+}
+
+
 
 class SortableObject
 {
@@ -47,9 +84,14 @@ int main(int argc, int* argv[])
     srand(static_cast<unsigned int>(now));
 
 	bool exit = false;
-	while (!exit) {
+	while (!exit) 
+    {
 
 #if NTEST
+        bool useCustom = false;
+        printf("Use custom object?\n");
+        std::cin >> useCustom;
+
 		bool useFloats = true;
 		printf("Floating point?\n");
 		std::cin >> useFloats;
@@ -72,47 +114,90 @@ int main(int argc, int* argv[])
 		srand((unsigned int)time(NULL));
 		printf("Array Length: %i \n", arrayLength);
 #else
-        bool useFloats = 1;
+        bool useCustom = 0;
+        bool useFloats = 0;
         bool _signed = 1;
         int arrayLength = 20;
 #endif
 		void* t = NULL;
-			
-		printf("Unsorted: ");
-		if (useFloats) {
-			t = new float[arrayLength];
-			for (int i = 0; i < arrayLength; i++) {
-				((float*)t)[i] =  (float)(rand() % 100) / 5.0f - 5.0f;
-				printf("%f ", ((float*)t)[i]);
-			}
-			printf("\n");
 
-	/*		for (int i = 0; i < arrayLength; i++) {
-				printf("%u ", cliqCity::flip(((uint32_t*)t)[i]));
-			}*/
-			printf("\n");
-		}
-		else {
-			if (_signed)
-			{
-				t = new int[arrayLength];
-				for (int i = 0; i < arrayLength; i++) {
-					((int*)t)[i] = rand() % RAND_MAX * dist(gen);
-					printf("%d ", ((int*)t)[i]);
-				}
-				printf("\n");
-			}
-			else
-			{
-				t = new unsigned int[arrayLength];
-				for (int i = 0; i < arrayLength; i++) {
-					((unsigned int*)t)[i] = rand() % RAND_MAX;
-					printf("%u ", ((unsigned int*)t)[i]);
-				}
-				printf("\n");
-			}
+		printf("Unsorted: ");
 			
-		}
+        if (useCustom)
+        {
+            if (useFloats)
+            {
+                t = new Custom<float>[arrayLength];
+                for (int i = 0; i < arrayLength; i++)
+                {
+                    float k = (float)(rand() % 100) / 5.0f - 5.0f;
+                    ((Custom<float>*)t)[i].key = k;
+                    ((Custom<float>*)t)[i].name = std::to_string(k);
+                }
+            }
+            else
+            {
+                if (_signed)
+                {
+                    t = new Custom<int>[arrayLength];
+
+                    for (int i = 0; i < arrayLength; i++)
+                    {
+                        int k = (int)(rand() % 100) - 50;
+                        ((Custom<int>*)t)[i].key = k;
+                        ((Custom<int>*)t)[i].name = std::to_string(k);
+                    }
+                }
+                else
+                {
+                    t = new Custom<unsigned int>[arrayLength];
+
+                    for (int i = 0; i < arrayLength; i++)
+                    {
+                        unsigned int k = (unsigned int)(rand() % 100);
+                        ((Custom<unsigned int>*)t)[i].key = k;
+                        ((Custom<unsigned int>*)t)[i].name = std::to_string(k);
+                    }
+                }
+            }
+
+        }
+        else 
+        {
+            if (useFloats) {
+                t = new float[arrayLength];
+                for (int i = 0; i < arrayLength; i++) {
+                    ((float*)t)[i] = (float)(rand() % 100) / 5.0f - 5.0f;
+                    printf("%f ", ((float*)t)[i]);
+                }
+                printf("\n");
+
+                /*		for (int i = 0; i < arrayLength; i++) {
+                printf("%u ", cliqCity::flip(((uint32_t*)t)[i]));
+                }*/
+                printf("\n");
+                }
+            else {
+                if (_signed)
+                {
+                    t = new int[arrayLength];
+                    for (int i = 0; i < arrayLength; i++) {
+                        ((int*)t)[i] = rand() % RAND_MAX * dist(gen);
+                        printf("%d ", ((int*)t)[i]);
+                    }
+                    printf("\n");
+                }
+                else
+                {
+                    t = new unsigned int[arrayLength];
+                    for (int i = 0; i < arrayLength; i++) {
+                        ((unsigned int*)t)[i] = rand() % RAND_MAX;
+                        printf("%u ", ((unsigned int*)t)[i]);
+                    }
+                    printf("\n");
+                }
+            }
+       }
 
 #if NTEST
 		int sortAlgorithm;
@@ -123,7 +208,7 @@ int main(int argc, int* argv[])
 		printf("Choose Sort Order: \n 0: Descending\n 1: Ascending\n");
 		std::cin >> sortOrder;
 #else
-        int sortAlgorithm = 7;
+        int sortAlgorithm = 2;
         int sortOrder = cliqCity::SortOrderAscending;
 #endif
 
@@ -150,8 +235,33 @@ int main(int argc, int* argv[])
 			(_signed) ? bubbleSort((float*)t, comparator, arrayLength, order) : bubbleSort((unsigned int*)t, unsignedComparator, arrayLength, order);
 			break;
 		case 2:
-			(_signed) ? mergeSort((float*)t, comparator, 0, arrayLength, order) : mergeSort((unsigned int*)t, unsignedComparator, 0, arrayLength, order);
-			break;
+        {
+            if (useCustom)
+            {
+                if (useFloats)
+                {
+                    Merge< Custom<float>>((Custom<float>*)t, arrayLength).Sort();
+                }
+                else
+                {
+                    if (_signed) { Merge<Custom<int>>((Custom<int>*)t, arrayLength).Sort(); }
+                    else { Merge<Custom<unsigned int>>((Custom<unsigned int>*)t, arrayLength).Sort(); }
+                }
+            }
+            else
+            {
+                if (useFloats)
+                {
+                    Merge<float>((float*)t, arrayLength).Sort();
+                }
+                else
+                {
+                    if (_signed) { Merge<int>((int*)t, arrayLength).Sort(); }
+                    else { Merge<unsigned int>((unsigned int*)t, arrayLength).Sort(); }
+                }
+                break;
+            }
+        }
 		case 3:
 			(_signed) ? quickSort((float*)t, comparator, 0, arrayLength, order) : quickSort((unsigned int*)t, unsignedComparator, 0, arrayLength, order);
 			break;
@@ -200,23 +310,33 @@ int main(int argc, int* argv[])
 		}
 
 		bool correct = true;
-		for (int i = 1; i < arrayLength; i++) {
-			if (order == cliqCity::SortOrderAscending) {
-				correct = (useFloats) ? (comparator(((float*)t)[i - 1], ((float*)t)[i]) <= 0) : (_signed) ? (icomp(((int*)t)[i - 1], ((int*)t)[i]) <= 0) : (ucomp(((unsigned int*)t)[i - 1], ((unsigned int*)t)[i]) <= 0);
-			}
-			else {
-				correct = (useFloats) ? (comparator(((float*)t)[i - 1], ((float*)t)[i]) >= 0) : (_signed) ? (icomp(((int*)t)[i - 1], ((int*)t)[i]) <= 0) : (ucomp(((unsigned int*)t)[i - 1], ((unsigned int*)t)[i]) >= 0);
-			}
-		
-			if (!correct) {
-				printf("ERROR: Sort output is incorrect \n");
-				break;
-			}
+		for (int i = 1; i < arrayLength; i++) 
+        {
+            if (useCustom)
+            {
+                correct = (useFloats) ? LessThan<float>()(((Custom<float>*)t)[i - 1].key, ((Custom<float>*)t)[i].key) : (_signed) ? LessThan<int>()(((Custom<int>*)t)[i - 1].key, ((Custom<int>*)t)[i].key) : LessThan<unsigned int>()(((Custom<unsigned int>*)t)[i - 1].key, ((Custom<unsigned int>*)t)[i].key);
+            }
+            else
+            {
+                correct = (useFloats) ? (comparator(((float*)t)[i - 1], ((float*)t)[i]) >= 0) : (_signed) ? (icomp(((int*)t)[i - 1], ((int*)t)[i]) <= 0) : (ucomp(((unsigned int*)t)[i - 1], ((unsigned int*)t)[i]) >= 0);
+            }   
 		}
+		
+        if (!correct) 
+        {
+            printf("ERROR: Sort output is incorrect \n");
+        }
 
 		printf("Sorted: ");
 		for (int i = 0; i < arrayLength; i++) {
-			(useFloats) ? printf("%f ", ((float*)t)[i]) : (_signed) ? printf("%d ", ((int*)t)[i]) : printf("%u ", ((unsigned int*)t)[i]);
+            if (useCustom)
+            {
+              (useFloats) ? printf("%f ", ((Custom<float>*)t)[i].key) : (_signed) ? printf("%d ", ((Custom<int>*)t)[i].key) : printf("%u ", ((Custom<unsigned int>*)t)[i].key);
+            }
+            else
+            {
+                (useFloats) ? printf("%f ", ((float*)t)[i]) : (_signed) ? printf("%d ", ((int*)t)[i]) : printf("%u ", ((unsigned int*)t)[i]);
+            }
 		}
 
 		printf("\n");

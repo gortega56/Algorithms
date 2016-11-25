@@ -24,10 +24,13 @@
     <ClInclude Include="typedefs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RadixSort.hpp">
+    <ClInclude Include="CountingSort.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CountingSort.h">
+    <ClInclude Include="MergeSort.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RadixSort.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

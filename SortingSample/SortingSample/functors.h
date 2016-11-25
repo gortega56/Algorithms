@@ -119,3 +119,13 @@ int compareInt(const void* a, const void* b)
 		return 1;
 	}
 }
+
+template<typename Key>
+struct Custom
+{
+    std::string name;
+    Key key;
+
+    Custom() {}
+    Custom(std::string n, Key k) : name(n), key(k) {}
+};

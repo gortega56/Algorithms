@@ -67,7 +67,8 @@
     <ClInclude Include="common.hpp" />
     <ClInclude Include="comparison_sorts.hpp" />
     <ClInclude Include="CountingSort.h" />
-    <ClInclude Include="RadixSort.hpp" />
+    <ClInclude Include="MergeSort.h" />
+    <ClInclude Include="RadixSort.h" />
     <ClInclude Include="typedefs.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

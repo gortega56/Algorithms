@@ -1,11 +1,10 @@
 #pragma once 
-#ifndef RADIXSORT_HPP
-#define RADIXSORT_HPP
+#ifndef RADIXSORT_H
+#define RADIXSORT_H
 
 #ifndef COMMON_HPP
 #include "common.hpp"
 #endif
-
 
 #ifndef TYPEDEFS_H
 #include "typedefs.h"
