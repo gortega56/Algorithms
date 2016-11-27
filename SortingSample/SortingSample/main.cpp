@@ -1,5 +1,7 @@
-#include "comparison_sorts.hpp"
 #include "MergeSort.h"
+#include "BubbleSort.h"
+#include "InsertionSort.h"
+#include "QuickSort.h"
 #include "RadixSort.h"
 #include <cstdlib>
 #include <stdio.h>
@@ -10,39 +12,62 @@
 #include <random>
 #include <string>
 
-using namespace cliqCity::algorithm;
-
-namespace cliqCity
+using namespace algorithm;
+namespace algorithm
 {
-    namespace algorithm
+    template<>
+    struct lessThan<Custom<float>>
     {
-        template<>
-        struct LessThan<Custom<float>>
+        bool operator()(const Custom<float>& lhs, const Custom<float>& rhs)
         {
-            bool operator()(const Custom<float>& lhs, const Custom<float>& rhs)
-            {
-                return lhs.key < rhs.key;
-            }
-        };
+            return lhs.key < rhs.key;
+        }
+    };
 
-        template<>
-        struct LessThan<Custom<int>>
+    template<>
+    struct lessThan<Custom<int>>
+    {
+        bool operator()(const Custom<int>& lhs, const Custom<int>& rhs)
         {
-            bool operator()(const Custom<int>& lhs, const Custom<int>& rhs)
-            {
-                return lhs.key < rhs.key;
-            }
-        };
+            return lhs.key < rhs.key;
+        }
+    };
 
-        template<>
-        struct LessThan<Custom<unsigned int>>
+    template<>
+    struct lessThan<Custom<unsigned int>>
+    {
+        bool operator()(const Custom<unsigned int>& lhs, const Custom<unsigned int>& rhs)
         {
-            bool operator()(const Custom<unsigned int>& lhs, const Custom<unsigned int>& rhs)
-            {
-                return lhs.key < rhs.key;
-            }
-        };
-    }
+            return lhs.key < rhs.key;
+        }
+    };
+
+    template<>
+    struct lessThanEqual<Custom<float>>
+    {
+        bool operator()(const Custom<float>& lhs, const Custom<float>& rhs)
+        {
+            return lhs.key <= rhs.key;
+        }
+    };
+
+    template<>
+    struct lessThanEqual<Custom<int>>
+    {
+        bool operator()(const Custom<int>& lhs, const Custom<int>& rhs)
+        {
+            return lhs.key <= rhs.key;
+        }
+    };
+
+    template<>
+    struct lessThanEqual<Custom<unsigned int>>
+    {
+        bool operator()(const Custom<unsigned int>& lhs, const Custom<unsigned int>& rhs)
+        {
+            return lhs.key <= rhs.key;
+        }
+    };
 }
 
 
@@ -117,7 +142,7 @@ int main(int argc, int* argv[])
         bool useCustom = 0;
         bool useFloats = 0;
         bool _signed = 1;
-        int arrayLength = 20;
+        int arrayLength = 5;
 #endif
 		void* t = NULL;
 
@@ -173,7 +198,7 @@ int main(int argc, int* argv[])
                 printf("\n");
 
                 /*		for (int i = 0; i < arrayLength; i++) {
-                printf("%u ", cliqCity::flip(((uint32_t*)t)[i]));
+                printf("%u ", flip(((uint32_t*)t)[i]));
                 }*/
                 printf("\n");
                 }
@@ -208,31 +233,34 @@ int main(int argc, int* argv[])
 		printf("Choose Sort Order: \n 0: Descending\n 1: Ascending\n");
 		std::cin >> sortOrder;
 #else
-        int sortAlgorithm = 2;
-        int sortOrder = cliqCity::SortOrderAscending;
+        int sortAlgorithm = 0;
+        int sortOrder = SortOrderAscending;
 #endif
 
-		cliqCity::SortOrder order;
+		SortOrder order;
 		switch (sortOrder)
 		{
 		case 0:
-			order = cliqCity::SortOrderDescending;
+			order = SortOrderDescending;
 			break;
 		case 1:
-			order = cliqCity::SortOrderAscending;
+			order = SortOrderAscending;
 			break;
 		default:
-			order = cliqCity::SortOrderDescending;
+			order = SortOrderDescending;
 			break;
 		}
 
 		switch (sortAlgorithm)
 		{
 		case 0:
-			(_signed) ? insertionSort((float*)t, comparator, arrayLength, order) : insertionSort((unsigned int*)t, unsignedComparator, arrayLength, order);
+            Insertion<i32>((i32*)t, arrayLength).Sort();
+			//(_signed) ? insertionSort((float*)t, comparator, arrayLength, order) : insertionSort((unsigned int*)t, unsignedComparator, arrayLength, order);
 			break;
 		case 1:
-			(_signed) ? bubbleSort((float*)t, comparator, arrayLength, order) : bubbleSort((unsigned int*)t, unsignedComparator, arrayLength, order);
+            Bubble<i32>((i32*)t, arrayLength).Sort();
+
+			//(_signed) ? bubbleSort((float*)t, comparator, arrayLength, order) : bubbleSort((unsigned int*)t, unsignedComparator, arrayLength, order);
 			break;
 		case 2:
         {
@@ -259,33 +287,58 @@ int main(int argc, int* argv[])
                     if (_signed) { Merge<int>((int*)t, arrayLength).Sort(); }
                     else { Merge<unsigned int>((unsigned int*)t, arrayLength).Sort(); }
                 }
-                break;
             }
+            break;
         }
 		case 3:
-			(_signed) ? quickSort((float*)t, comparator, 0, arrayLength, order) : quickSort((unsigned int*)t, unsignedComparator, 0, arrayLength, order);
-			break;
+        {
+
+            if (useCustom)
+            {
+                if (useFloats)
+                {
+                    Quick< Custom<float>>((Custom<float>*)t, arrayLength).Sort();
+                }
+                else
+                {
+                    if (_signed) { Quick<Custom<int>>((Custom<int>*)t, arrayLength).Sort(); }
+                    else { Quick<Custom<unsigned int>>((Custom<unsigned int>*)t, arrayLength).Sort(); }
+                }
+            }
+            else
+            {
+                if (useFloats)
+                {
+                    Quick<float>((float*)t, arrayLength).Sort();
+                }
+                else
+                {
+                    if (_signed) { Quick<int>((int*)t, arrayLength).Sort(); }
+                    else { Quick<unsigned int>((unsigned int*)t, arrayLength).Sort(); }
+                }
+            }	
+            break;
+        }
 		case 4:
-			(_signed) ? randomizedQuickSort((float*)t, comparator, 0, arrayLength, order) : randomizedQuickSort((unsigned int*)t, unsignedComparator, 0, arrayLength, order);
+			//(_signed) ? randomizedQuickSort((float*)t, comparator, 0, arrayLength, order) : randomizedQuickSort((unsigned int*)t, unsignedComparator, 0, arrayLength, order);
 			break;
 		case 5:
-			(_signed) ? heapSort((float*)t, comparator, arrayLength, order) : heapSort((unsigned int*)t, unsignedComparator, arrayLength, order);
+		//	(_signed) ? heapSort((float*)t, comparator, arrayLength, order) : heapSort((unsigned int*)t, unsignedComparator, arrayLength, order);
 			break;
 		case 6:
 		{
-			if (_signed) {
-				
+			if (_signed) 
+            {	
                 Count<int, int>((int*)t, arrayLength).Sort(rank);
 			}
-			else {
+			else 
+            {
                 Count<unsigned int, unsigned int>((unsigned int*)t, arrayLength).Sort(unsignedRank);
 			}
 			break;
 		}
 		case 7:
 		{
-
-			void* s;
 			if (useFloats) 
             {
                 Radix<float, float>((float*)t, arrayLength).Sort(fKey);
@@ -297,12 +350,9 @@ int main(int argc, int* argv[])
 				}
 				else
 				{
-                    Radix<u32, u32>((u32*)t, arrayLength).Sort([](u32 n) {return n; });
+                    Radix<u32, u32>((u32*)t, arrayLength).Sort([](u32 n) { return n; });
                 }
 			}
-
-		/*	delete[] t;
-			t = s;*/
 			break;
 		}
 		default:
@@ -314,7 +364,7 @@ int main(int argc, int* argv[])
         {
             if (useCustom)
             {
-                correct = (useFloats) ? LessThan<float>()(((Custom<float>*)t)[i - 1].key, ((Custom<float>*)t)[i].key) : (_signed) ? LessThan<int>()(((Custom<int>*)t)[i - 1].key, ((Custom<int>*)t)[i].key) : LessThan<unsigned int>()(((Custom<unsigned int>*)t)[i - 1].key, ((Custom<unsigned int>*)t)[i].key);
+                correct = (useFloats) ? lessThan<float>()(((Custom<float>*)t)[i - 1].key, ((Custom<float>*)t)[i].key) : (_signed) ? lessThan<int>()(((Custom<int>*)t)[i - 1].key, ((Custom<int>*)t)[i].key) : lessThan<unsigned int>()(((Custom<unsigned int>*)t)[i - 1].key, ((Custom<unsigned int>*)t)[i].key);
             }
             else
             {

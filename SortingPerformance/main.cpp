@@ -1,14 +1,18 @@
 #include <Windows.h>
 #include <ctime>
 #include <climits>
+#include <algorithm>
 
-#include "comparison_sorts.hpp"
+#include "InsertionSort.h"
+#include "BubbleSort.h"
+#include "MergeSort.h"
+#include "QuickSort.h"
 #include "RadixSort.h"
 #include "../SortingSample/SortingSample/functors.h"
 
-using namespace cliqCity::algorithm;
+using namespace algorithm;
 
-static const int ARRAY_LENGTH = 10000;
+static const int ARRAY_LENGTH = 100;
 
 void resetArrays(uint32_t* a1, int32_t* a2, float* a3, const int& length)
 {
@@ -37,26 +41,50 @@ int main(int argc, int* argv[])
 	QueryPerformanceFrequency(&frequency);
 
 	QueryPerformanceCounter(&counterStart);
-	randomizedQuickSort(a1, unsignedComparator, 0, ARRAY_LENGTH, cliqCity::SortOrderAscending);
-	QueryPerformanceCounter(&counterTime);
+    Quick<int32_t>(a2, ARRAY_LENGTH).Sort();
+    QueryPerformanceCounter(&counterTime);
 	elapsedTime = (float)(counterTime.QuadPart - counterStart.QuadPart) / frequency.QuadPart;
-	printf("Randomized Quick Sort: Elements: %i Time: %f\n", ARRAY_LENGTH, elapsedTime);
+	printf("Quick Sort: Elements: %i Time: %f\n", ARRAY_LENGTH, elapsedTime);
 
 	resetArrays(a1, a2, a3, ARRAY_LENGTH);
 
 	QueryPerformanceCounter(&counterStart);
-	mergeSort(a1, unsignedComparator, 0, ARRAY_LENGTH, cliqCity::SortOrderAscending);
-	QueryPerformanceCounter(&counterTime);
+    Merge<int32_t>(a2, ARRAY_LENGTH).Sort();
+    QueryPerformanceCounter(&counterTime);
 	elapsedTime = (float)(counterTime.QuadPart - counterStart.QuadPart) / frequency.QuadPart;
 	printf("Merge Sort: Elements: %i Time: %f\n", ARRAY_LENGTH, elapsedTime);
 
 	resetArrays(a1, a2, a3, ARRAY_LENGTH);
 
 	QueryPerformanceCounter(&counterStart);
-	insertionSort(a1, unsignedComparator, ARRAY_LENGTH, cliqCity::SortOrderAscending);
+    Radix<int32_t, int32_t>(a2, ARRAY_LENGTH).Sort([](int32_t i) {return i; });
 	QueryPerformanceCounter(&counterTime);
 	elapsedTime = (float)(counterTime.QuadPart - counterStart.QuadPart) / frequency.QuadPart;
-	printf("Insertion Sort: Elements: %i Time: %f\n", ARRAY_LENGTH, elapsedTime);
+	printf("Radix Sort: Elements: %i Time: %f\n", ARRAY_LENGTH, elapsedTime);
+
+    resetArrays(a1, a2, a3, ARRAY_LENGTH);
+
+    QueryPerformanceCounter(&counterStart);
+    Insertion<int32_t>(a2, ARRAY_LENGTH).Sort();
+    QueryPerformanceCounter(&counterTime);
+    elapsedTime = (float)(counterTime.QuadPart - counterStart.QuadPart) / frequency.QuadPart;
+    printf("Insertion Sort: Elements: %i Time: %f\n", ARRAY_LENGTH, elapsedTime);
+
+    resetArrays(a1, a2, a3, ARRAY_LENGTH);
+
+    QueryPerformanceCounter(&counterStart);
+    Bubble<int32_t>(a2, ARRAY_LENGTH).Sort();
+    QueryPerformanceCounter(&counterTime);
+    elapsedTime = (float)(counterTime.QuadPart - counterStart.QuadPart) / frequency.QuadPart;
+    printf("Bubble Sort: Elements: %i Time: %f\n", ARRAY_LENGTH, elapsedTime);
+
+    resetArrays(a1, a2, a3, ARRAY_LENGTH);
+
+    QueryPerformanceCounter(&counterStart);
+    std::sort(a2, a2 + ARRAY_LENGTH);
+    QueryPerformanceCounter(&counterTime);
+    elapsedTime = (float)(counterTime.QuadPart - counterStart.QuadPart) / frequency.QuadPart;
+    printf("STL Sort: Elements: %i Time: %f\n", ARRAY_LENGTH, elapsedTime);
 
 	getchar();
 }

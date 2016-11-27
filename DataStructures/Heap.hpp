@@ -1,10 +1,6 @@
-// Heap.hpp
-//
-//
-// Gabriel Ortega
-
 #pragma once 
-#include "../Algorithms/comparison_sorts.hpp"
+#ifndef HEAP_H
+#define HEAP_H
 
 namespace cliqCity
 {
@@ -50,3 +46,5 @@ namespace cliqCity
 		SortOrder order;
 	};
 }
+
+#endif

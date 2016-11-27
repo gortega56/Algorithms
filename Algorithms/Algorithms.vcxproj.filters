@@ -15,22 +15,34 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="common.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="comparison_sorts.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="typedefs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CountingSort.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="RadixSort.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="MergeSort.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RadixSort.h">
+    <ClInclude Include="QuickSort.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="InsertionSort.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="algo_internal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BubbleSort.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="heap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
