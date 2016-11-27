@@ -57,7 +57,7 @@ int main(int argc, int* argv[])
 	resetArrays(a1, a2, a3, ARRAY_LENGTH);
 
 	QueryPerformanceCounter(&counterStart);
-    Radix<int32_t, int32_t>(a2, ARRAY_LENGTH).Sort([](int32_t i) {return i; });
+    Radix<int32_t, int32_t>(a2, ARRAY_LENGTH).Sort();
 	QueryPerformanceCounter(&counterTime);
 	elapsedTime = (float)(counterTime.QuadPart - counterStart.QuadPart) / frequency.QuadPart;
 	printf("Radix Sort: Elements: %i Time: %f\n", ARRAY_LENGTH, elapsedTime);

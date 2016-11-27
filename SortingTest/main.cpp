@@ -190,9 +190,9 @@ int main(int argc, int* argv[])
     Radix<Sortable<f32>, f32>(sfv).Sort([](Sortable<f32> s) { return s.key; });
     Radix<Sortable<i32>, i32>(siv).Sort([](Sortable<i32> s) { return s.key; });
     Radix<Sortable<u32>, u32>(suv).Sort([](Sortable<u32> s) { return s.key; });
-    Radix<f32, f32>(fv).Sort([](f32 s) { return s; });
-    Radix<i32, i32>(iv).Sort([](i32 s) { return s; });
-    Radix<u32, u32>(uv).Sort([](u32 s) { return s; });
+    Radix<f32, f32>(fv).Sort();
+    Radix<i32, i32>(iv).Sort();
+    Radix<u32, u32>(uv).Sort();
 
     check();
     reset();
@@ -201,8 +201,8 @@ int main(int argc, int* argv[])
     Count<Sortable<i32>, i32>(siv).Sort([](Sortable<i32> s) { return s.key; });
     Count<Sortable<u32>, u32>(suv).Sort([](Sortable<u32> s) { return s.key; });
     Count<f32, i32>(fv).Sort([](f32 s) { return (i32)s; });
-    Count<i32, i32>(iv).Sort([](i32 s) { return s; });
-    Count<u32, u32>(uv).Sort([](u32 s) { return s; });
+    Count<i32, i32>(iv).Sort();
+    Count<u32, u32>(uv).Sort();
 
     check();
     reset();

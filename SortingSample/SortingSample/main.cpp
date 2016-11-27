@@ -142,7 +142,7 @@ int main(int argc, int* argv[])
         bool useCustom = 0;
         bool useFloats = 0;
         bool _signed = 1;
-        int arrayLength = 5;
+        int arrayLength = 25;
 #endif
 		void* t = NULL;
 
@@ -233,7 +233,7 @@ int main(int argc, int* argv[])
 		printf("Choose Sort Order: \n 0: Descending\n 1: Ascending\n");
 		std::cin >> sortOrder;
 #else
-        int sortAlgorithm = 0;
+        int sortAlgorithm = 7;
         int sortOrder = SortOrderAscending;
 #endif
 
@@ -341,16 +341,16 @@ int main(int argc, int* argv[])
 		{
 			if (useFloats) 
             {
-                Radix<float, float>((float*)t, arrayLength).Sort(fKey);
+                Radix<float, float>((float*)t, arrayLength).Sort();
 			}
 			else {
 				if (_signed)
 				{
-					Radix<i32, i32>((i32*)t, arrayLength).Sort([](i32 n) { return n; });
+					Radix<i32, i32>((i32*)t, arrayLength).Sort();
 				}
 				else
 				{
-                    Radix<u32, u32>((u32*)t, arrayLength).Sort([](u32 n) { return n; });
+                    Radix<u32, u32>((u32*)t, arrayLength).Sort();
                 }
 			}
 			break;

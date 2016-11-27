@@ -48,8 +48,8 @@ namespace algorithm
     public:
         using radix<Type>::radix;
 
-        template<class Functor>
-        inline Radix& Sort(Functor func)
+        template<class Functor = pod<Type>>
+        inline Radix& Sort(Functor func = pod<Type>())
         {
             // Range * Number of Counters * Bytes Per Location
             u32 counter[256 * 4];
@@ -130,8 +130,8 @@ namespace algorithm
     public:
         using radix<Type>::radix;
 
-        template<class Functor>
-        inline Radix& Sort(Functor func)
+        template<class Functor = pod<Type>>
+        inline Radix& Sort(Functor func = pod<Type>())
         {
             u32 counter[256 * 4];
             memset(counter, 0, 256 * 4 * sizeof(u32));
@@ -237,8 +237,8 @@ namespace algorithm
     public:
         using radix<Type>::radix;
 
-        template<class Functor>
-        inline Radix& Sort(Functor func)
+        template<class Functor = pod<Type>>
+        inline Radix& Sort(Functor func = pod<Type>())
         {
             u32 counter[256 * 4 + 128];
             memset(counter, 0, (256 * 4 + 128) * sizeof(u32));

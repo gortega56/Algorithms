@@ -48,8 +48,8 @@ namespace algorithm
     public:
         using count<Type>::count;
 
-        template<class Functor>
-        Count& Sort(Functor func)
+        template<class Functor = pod<Type>>
+        Count& Sort(Functor func = pod<Type>())
         {
             u32 max = 0;
             for (int i = 0; i < length; ++i)
@@ -100,8 +100,8 @@ namespace algorithm
     public:
         using count<Type>::count;
 
-        template<class Functor>
-        Count& Sort(Functor func)
+        template<class Functor = pod<Type>>
+        Count& Sort(Functor func = pod<Type>())
         {
             i32 max = INT32_MIN;
             i32 min = INT32_MAX;

@@ -36,6 +36,15 @@ namespace algorithm
             return lhs <= rhs;
         }
     };
+
+    template<typename Type>
+    struct pod
+    {
+        Type& operator()(Type& t)
+        {
+            return t;
+        }
+    };
 }
 
 #endif
